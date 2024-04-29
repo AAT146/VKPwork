@@ -4,6 +4,8 @@ using System.IO;
 using ASTRALib;
 using OfficeOpenXml;
 using MathNet.Numerics.Distributions;
+using System.Diagnostics;
+using Microsoft.Office.Interop.Excel;
 
 
 namespace VKPwork
@@ -35,86 +37,207 @@ namespace VKPwork
 		}
 
 		/// <summary>
+		/// Получение функциональной зависимости по норм.распр.
+		/// </summary>
+		/// <param name="x">Значение в точке.</param>
+		/// <param name="mean">Математическое ожидание.</param>
+		/// <param name="stdDev">Среднеквадратическое отклонение.</param>
+		/// <param name="cumulative">Флаг: true - интегральная функция распределения; 
+		/// false - весовая функция распределения.</param>
+		/// <returns>Возврат: функция распределения.</returns>
+		public static double DoNormDist(double x, double mean, double stdDev, bool cumulative)
+		{
+			// Создание обекта норм.распр. с заданными МО и СКО
+			Normal normalDistribution = new Normal(mean, stdDev);
+			if (cumulative)
+			{
+				// Интегральная функция распределения
+				return normalDistribution.CumulativeDistribution(x);
+			}
+			else
+			{
+				// Весовая функция распределиня
+				return normalDistribution.Density(x);
+			}
+		}
+
+		/// <summary>
 		/// Упрощенное моделирование.
 		/// </summary>
 		public static void Main()
 		{
-			// Создание указателя на экземпляр RastrWin и его запуск
-			IRastr rastr = new Rastr();
+			//// Создание указателя на экземпляр RastrWin и его запуск
+			//IRastr rastr = new Rastr();
 
-			// Загрузка файл
-			string file = @"C:\Users\Анастасия\Desktop\ПроизПрактика\Растр\Режим.rg2";
-			string shablon = @"C:\Users\Анастасия\Desktop\ПроизПрактика\Растр\режим.rg2";
+			//// Загрузка файл
+			//string file = @"C:\Users\aat146\Desktop\ПроизПрактика\Растр\Режим.rg2";
+			//string shablon = @"C:\Programs\RastrWin3\RastrWin3\SHABLON\режим.rg2";
 
-			rastr.Load(RG_KOD.RG_REPL, file, shablon);
+			//rastr.Load(RG_KOD.RG_REPL, file, shablon);
 
-			// Объявление объекта, содержащего таблицу "Узлы"
-			ITable tableNode = (ITable)rastr.Tables.Item("node");
+			//// Объявление объекта, содержащего таблицу "Узлы"
+			//ITable tableNode = (ITable)rastr.Tables.Item("node");
 
-			// Объявление объекта, содержащего таблицу "Генератор(УР)"
-			ITable tableGenYR = (ITable)rastr.Tables.Item("Generator");
+			//// Объявление объекта, содержащего таблицу "Генератор(УР)"
+			//ITable tableGenYR = (ITable)rastr.Tables.Item("Generator");
 
-			// Объявление объекта, содержащего таблицу "Ветви"
-			ITable tableVetv = (ITable)rastr.Tables.Item("vetv");
+			//// Объявление объекта, содержащего таблицу "Ветви"
+			//ITable tableVetv = (ITable)rastr.Tables.Item("vetv");
 
-			// Узлы
-			ICol numberNode = (ICol)tableNode.Cols.Item("ny");   // Номер
-			ICol nameNode = (ICol)tableNode.Cols.Item("name");   // Название
-			ICol activeGen = (ICol)tableNode.Cols.Item("pg");   // Мощность генерации
-			ICol activeLoad = (ICol)tableNode.Cols.Item("pn");   // Мощность нагрузки
+			//// Узлы
+			//ICol numberNode = (ICol)tableNode.Cols.Item("ny");   // Номер
+			//ICol nameNode = (ICol)tableNode.Cols.Item("name");   // Название
+			//ICol activeGen = (ICol)tableNode.Cols.Item("pg");   // Мощность генерации
+			//ICol activeLoad = (ICol)tableNode.Cols.Item("pn");   // Мощность нагрузки
 
-			// Ветви
-			ICol staVetv = (ICol)tableVetv.Cols.Item("sta");   // Состояние
-			ICol tipVetv = (ICol)tableVetv.Cols.Item("tip");   // Тип
-			ICol nStart = (ICol)tableVetv.Cols.Item("ip");   // Номер начала
-			ICol nEnd = (ICol)tableVetv.Cols.Item("iq");   // Номер конца
-			ICol nParall = (ICol)tableVetv.Cols.Item("np");   // Номер параллельности
-			ICol nameVetv = (ICol)tableVetv.Cols.Item("name");   // Название
+			//// Ветви
+			//ICol staVetv = (ICol)tableVetv.Cols.Item("sta");   // Состояние
+			//ICol tipVetv = (ICol)tableVetv.Cols.Item("tip");   // Тип
+			//ICol nStart = (ICol)tableVetv.Cols.Item("ip");   // Номер начала
+			//ICol nEnd = (ICol)tableVetv.Cols.Item("iq");   // Номер конца
+			//ICol nParall = (ICol)tableVetv.Cols.Item("np");   // Номер параллельности
+			//ICol nameVetv = (ICol)tableVetv.Cols.Item("name");   // Название
 
-			// Файл Excel генеральной совопукности
-			string xlsxLoad = "C:\\Users\\Анастасия\\Desktop\\ПроизПрактика\\Растр\\Load.xlsx";
-			//string xlsxGenerator = "C:\Users\Анастасия\Desktop\ПроизПрактика\Растр\\Generator.xlsx";
+			// Создание объекта времени
+			Stopwatch stopwatch = new Stopwatch();
 
-			// Чтение данных из файла Excel
-			double[] dataLoad = ReadFileFromExcel(xlsxLoad);
-			//double[] dataGenerator = ReadFileFromExcel(xlsxGenerator);
+			// Засекаем время начала операции
+			stopwatch.Start();
 
-			// Константы для двух распределений
-			double mo1 = 104;
-			double sko1 = 9.6;
-			double k1 = 0.4;
-			double mo2 = 109;
-			double sko2 = 5.6;
-			double k2 = 0.6;
+			// Константы для искусственного з.распр. генерации ГЭС
+			double v3 = 0.55;
+			double sko3 = 3.5;
+			double mo3 = 14.5;
+			double v2 = 0.368;
+			double sko2 = 1.3;
+			double mo2 = 86.95;
+			double v1 = 0.00351;
+			double r = 0.1;
+			double minGen = 8;
+			double maxGen = 87
+				;
+			// Константы для искусственного з.распр. нагрузки
+			double v4 = 0.4;
+			double sko4 = 9.6;
+			double mo4 = 104;
+			double v5 = 0.6;
+			double sko5 = 5.6;
+			double mo5 = 109;
+			double minLoad = 10;
+			double maxLoad = 167;
 
-			// Создаем нормальное распределение
-			Normal normalDistribution = new Normal(mean: mo1, stddev: sko1);
-			double sample = normalDistribution.Sample();
+			// Генерация чисел
+			Random rand = new Random();
 
-			//NormalDistribution standardNormal1 = new NormalDistribution(mo1, sko1);
-			//NormalDistribution standardNormal2 = new NormalDistribution(mo2, sko2);
+			// Лист для хранения СВ генерации
+			List<double> randValueGen = new List<double>();
 
-			Console.WriteLine($"{sample}");
-			
-			//// Создаем нормальное распределение с МО = 0 и СКО = 1
-			//NormalDistribution standardNormal = new NormalDistribution();
+			// Лсит для хранения СВ нагрузки
+			List<double> randValueLoad = new List<double>();
 
-			//// Масштабируем и сдвигаем распределение
-			//NormalDistribution normal1 = (standardNormal * sko1) + mo1;
+			// Генерация случайного числа генерации в цикле с условием
+			for (int i = 0; i < 1000; i++)
+			{
+				double q = rand.NextDouble();
 
-			//// Генерация случайной величины по нормальному распределению
-			//Random rand = new Random();
-			//double a = rand.NextDouble();
-			//double normal = Math.Sqrt(-2.0 * Math.Log(a)) * Math.Sin(2.0 * Math.PI * a);
+				if (q >= 0 && q < v3)
+				{
+					Normal normalDistribution = new Normal(mo3, sko3);
+					double part3 = Math.Round(normalDistribution.Sample(), 4);
+					if (part3 >= minGen && part3 < maxGen)
+					{
+						randValueGen.Add(part3);
+					}
+				}
 
-			//// Формирование случайной величины
-			//double rdm1 = k1 * (Math.Round((mo1 + (sko1 * normal)), 2));
-			//double rdm2 = k2 * (Math.Round((mo2 + (sko2 * normal)), 2));
-			//double rdm = rdm1 + rdm2;
+				else if (q >= v3 && q < (v3 + v1))
+				{
+					Exponential exponentialDistribution = new Exponential(r);
+					double part1 = Math.Round(0.08 + 0.12 * (1 - exponentialDistribution.Sample()) + 0.8, 4);
+					if (part1 >= minGen && part1 < maxGen)
+					{
+						randValueGen.Add(part1);
+					}
+				}
 
-			//Console.WriteLine($"МО 1: {mo1} || СКО 1: {sko1} || Коэфф 1: {k1} || СВ 1: {rdm1}\n" +
-			//	$"МО 2: {mo2} || СКО 2: {sko2} || Коэфф 2: {k2} || СВ 2: {rdm2}\n" +
-			//	$"СВ: {rdm}");
+				else if (q >= (v3 + v1) && q < (v3 + v1 + v2))
+				{
+					Normal normalDistribution = new Normal(mo2, sko2);
+					double part2 = Math.Round(normalDistribution.Sample(), 4);
+					if (part2 >= minGen && part2 < maxGen)
+					{
+						randValueGen.Add(part2);
+					}
+				}
+			}
+
+			// Генерация случайного числа нагрузки в цикле с условием
+			for (int i = 0; i < 1000; i++)
+			{
+				Normal normalDist4 = new Normal(mo4, sko4);
+				double part4 = Math.Round(v4 * normalDist4.Sample(), 4);
+
+				Normal normalDist5 = new Normal(mo5, sko5);
+				double part5 = Math.Round(v5 * normalDist5.Sample(), 4);
+
+				double value = Math.Round(part4 + part5, 4);
+				if (value>= minLoad && value < maxLoad)
+				{
+					randValueLoad.Add(value);
+				}
+			}
+
+			// Путь до файла Excel
+			string folder = @"C:\Users\Анастасия\Desktop\ПроизПрактика";
+			string fileExcel = "Результат.xlsx";
+			string xlsxFile = Path.Combine(folder, fileExcel);
+
+			// Создание книги и листа
+			Application excelApp = new Application();
+			Workbook workbook = excelApp.Workbooks.Add();
+			Worksheet worksheet = workbook.Sheets.Add();
+			worksheet.Name = "Случайные величины";
+
+			Console.WriteLine($"Работа алгоритма.\n");
+			Console.WriteLine($"Сучайные числа генерации:\n");
+
+			// Вывод значений на экран и в excel
+			for (int i = 0; i < randValueGen.Count; i++)
+			{
+				Console.WriteLine(randValueGen[i]);
+
+				// Получаем диапазон ячеек начиная с ячейки A1
+				Range range = worksheet.Range["A1"];
+
+				// Запись случайной величины в столбец А
+				range.Offset[0, 0].Value = "Генерация";
+				range.Offset[i + 1, 0].Value = randValueGen[i];
+			}
+
+			Console.WriteLine("\nСучайные числа нагрузки:\n");
+
+			// Вывод значений на экран и в excel
+			for (int i = 0; i < randValueLoad.Count; i++)
+			{
+				Console.WriteLine(randValueLoad[i]);
+
+				// Получаем диапазон ячеек начиная с ячейки A1
+				Range range = worksheet.Range["A1"];
+
+				// Запись случайной величины в столбец А
+				range.Offset[0, 1].Value = "Нагрузка";
+				range.Offset[i + 1, 1].Value = randValueLoad[i];
+			}
+
+			workbook.SaveAs(xlsxFile);
+			workbook.Close();
+			excelApp.Quit();
+
+			// Останавливаем счетчик
+			stopwatch.Stop();
+
+			Console.WriteLine($"\nВремя расчета: {stopwatch.ElapsedMilliseconds} мс\n" +
+				$"Файл Excel успешно сохранен по пути: {xlsxFile}\n");
 
 			//var setSelName = "ny=" + 5;   // Переменная ny = 5 (№ узла = 5)
 			//tableNode.SetSel(setSelName);   // Выборка по переменной
@@ -134,11 +257,11 @@ namespace VKPwork
 			//Console.WriteLine($"Название ветви: {name1v}");
 
 			// Расчет УР
-			_ = rastr.rgm("");
+			//_ = rastr.rgm("");
 
-			// Сохранение результатов
-			string fileNew = @"C:\Users\Анастасия\Desktop\ПроизПрактика\Растр\Режим2.rg2";
-			rastr.Save(fileNew, shablon);
+			//// Сохранение результатов
+			//string fileNew = @"C:\Users\aat146\Desktop\ПроизПрактика\Растр\Режим2.rg2";
+			//rastr.Save(fileNew, shablon);
 		}
 	}
 }
