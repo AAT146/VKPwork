@@ -208,7 +208,7 @@ namespace VKPwork
 			List<double> ksPeledSyxLog = new List<double>();
 			List<double> ksTaksimoMamakan = new List<double>();
 
-			//// Цикл расчета перетоков в RastrWin3
+			// Цикл расчета перетоков в RastrWin3
 			for (int i = 0; i < 1000; i++)
 			{
 				// Присвоение нового числа мощности генерации
