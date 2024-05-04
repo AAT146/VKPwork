@@ -105,13 +105,13 @@ namespace VKPwork
 			stopwatch.Start();
 
 			// Константы для искусственного з.распр. генерации ГЭС
-			double v3 = 0.50;
-			double sko3 = 3.5;
+			double v3 = 0.42;
+			double sko3 = 3.7;
 			double mo3 = 14.5;
-			double v2 = 0.36;
+			double v2 = 0.3;
 			double sko2 = 1.3;
 			double mo2 = 86.95;
-			double v1 = 0.14;
+			double v1 = 0.16;
 			double lowerBound = 23;
 			double upperBound = 83.05;
 			double minGen = 8;
@@ -175,41 +175,41 @@ namespace VKPwork
 				}
 			}
 
-			//// Генерация случайного числа нагрузки в цикле с условием
-			//while (randValueLoad.Count < 105409)
-			//{
-			//	double q = rand.NextDouble();
-			//	if (q >= 0 && q < v4)
-			//	{
-			//		Normal normalDistribution = new Normal(mo4, sko4);
-			//		double part4 = Math.Round(normalDistribution.Sample(), 0); 
-			//		if (part4 >= minLoad && part4 < maxLoad)
-			//		{
-			//			randValueLoad.Add(part4);
-			//		}
-			//	}
-			//	else if (q >= v4 && q < (v4 + v5))
-			//	{
-			//		Normal normalDistribution = new Normal(mo5, sko5);
-			//		double part5 = Math.Round(normalDistribution.Sample(), 0); 
-			//		if (part5 >= minLoad && part5 < maxLoad)
-			//		{
-			//			randValueLoad.Add(part5);
-			//		}
-			//	}
-			//	else if (q >= v5 && q < (v4 + v5 + v6))
-			//	{
-			//		Normal normalDistribution = new Normal(mo6, sko6);
-			//		double part6 = Math.Round(normalDistribution.Sample(), 0);
-			//		if (part6 >= minLoad && part6 < maxLoad)
-			//		{
-			//			randValueLoad.Add(part6);
-			//		}
-			//	}
-			//}
+			// Генерация случайного числа нагрузки в цикле с условием
+			while (randValueLoad.Count < 105409)
+			{
+				double q = rand.NextDouble();
+				if (q >= 0 && q < v4)
+				{
+					Normal normalDistribution = new Normal(mo4, sko4);
+					double part4 = Math.Round(normalDistribution.Sample(), 0);
+					if (part4 >= minLoad && part4 < maxLoad)
+					{
+						randValueLoad.Add(part4);
+					}
+				}
+				else if (q >= v4 && q < (v4 + v5))
+				{
+					Normal normalDistribution = new Normal(mo5, sko5);
+					double part5 = Math.Round(normalDistribution.Sample(), 0);
+					if (part5 >= minLoad && part5 < maxLoad)
+					{
+						randValueLoad.Add(part5);
+					}
+				}
+				else if (q >= v5 && q < (v4 + v5 + v6))
+				{
+					Normal normalDistribution = new Normal(mo6, sko6);
+					double part6 = Math.Round(normalDistribution.Sample(), 0);
+					if (part6 >= minLoad && part6 < maxLoad)
+					{
+						randValueLoad.Add(part6);
+					}
+				}
+			}
 
 			// Путь до файла Excel
-			string folder = @"C:\Users\Анастасия\Desktop\ПроизПрактика";
+			string folder = @"C:\Users\aat146\Desktop\ПроизПрактика";
 			string fileExcel = "Результат.xlsx";
 			string xlsxFile = Path.Combine(folder, fileExcel);
 
@@ -235,20 +235,20 @@ namespace VKPwork
 				range.Offset[i + 1, 0].Value = randValueGen[i];
 			}
 
-			//Console.WriteLine("\nСучайные числа нагрузки:\n");
+			Console.WriteLine("\nСучайные числа нагрузки:\n");
 
-			//// Вывод значений на экран и в excel
-			//for (int i = 0; i < randValueLoad.Count; i++)
-			//{
-			//	//Console.WriteLine(randValueLoad[i]);
+			// Вывод значений на экран и в excel
+			for (int i = 0; i < randValueLoad.Count; i++)
+			{
+				//Console.WriteLine(randValueLoad[i]);
 
-			//	// Получаем диапазон ячеек начиная с ячейки A1
-			//	Range range = worksheet.Range["A1"];
+				// Получаем диапазон ячеек начиная с ячейки A1
+				Range range = worksheet.Range["A1"];
 
-			//	// Запись случайной величины в столбец А
-			//	range.Offset[0, 1].Value = "Нагрузка";
-			//	range.Offset[i + 1, 1].Value = randValueLoad[i];
-			//}
+				// Запись случайной величины в столбец А
+				range.Offset[0, 1].Value = "Нагрузка";
+				range.Offset[i + 1, 1].Value = randValueLoad[i];
+			}
 
 			workbook.SaveAs(xlsxFile);
 			workbook.Close();
@@ -261,6 +261,8 @@ namespace VKPwork
 				$"Файл Excel успешно сохранен по пути: {xlsxFile}\n" +
 				$"Количество СВ генерации: {randValueGen.Count}\n" +
 				$"Количество СВ нагрузки: {randValueLoad.Count}\n");
+
+			Console.ReadKey();
 
 			//var setSelName = "ny=" + 5;   // Переменная ny = 5 (№ узла = 5)
 			//tableNode.SetSel(setSelName);   // Выборка по переменной
