@@ -105,24 +105,28 @@ namespace VKPwork
 			stopwatch.Start();
 
 			// Константы для искусственного з.распр. генерации ГЭС
-			double v3 = 0.55;
+			double v3 = 0.50;
 			double sko3 = 3.5;
 			double mo3 = 14.5;
-			double v2 = 0.368;
+			double v2 = 0.36;
 			double sko2 = 1.3;
 			double mo2 = 86.95;
-			double v1 = 0.00351;
-			double r = 0.1;
+			double v1 = 0.14;
+			double lowerBound = 23;
+			double upperBound = 83.05;
 			double minGen = 8;
 			double maxGen = 87
 				;
 			// Константы для искусственного з.распр. нагрузки
-			double v4 = 0.4;
-			double sko4 = 9.6;
-			double mo4 = 104;
-			double v5 = 0.6;
-			double sko5 = 5.6;
-			double mo5 = 109;
+			double v4 = 0.43;
+			double sko4 = 5.8;
+			double mo4 = 110.55;
+			double v5 = 0.41;
+			double sko5 = 11.2;
+			double mo5 = 107.8;
+			double v6 = 0.16;
+			double sko6 = 5.5;
+			double mo6 = 123.5;
 			double minLoad = 10;
 			double maxLoad = 167;
 
@@ -136,14 +140,14 @@ namespace VKPwork
 			List<double> randValueLoad = new List<double>();
 
 			// Генерация случайного числа генерации в цикле с условием
-			for (int i = 0; i < 1000; i++)
+			while (randValueGen.Count < 105409)
 			{
 				double q = rand.NextDouble();
 
 				if (q >= 0 && q < v3)
 				{
 					Normal normalDistribution = new Normal(mo3, sko3);
-					double part3 = Math.Round(normalDistribution.Sample(), 4);
+					double part3 = Math.Round(normalDistribution.Sample(), 0);
 					if (part3 >= minGen && part3 < maxGen)
 					{
 						randValueGen.Add(part3);
@@ -152,8 +156,8 @@ namespace VKPwork
 
 				else if (q >= v3 && q < (v3 + v1))
 				{
-					Exponential exponentialDistribution = new Exponential(r);
-					double part1 = Math.Round(0.08 + 0.12 * (1 - exponentialDistribution.Sample()) + 0.8, 4);
+					ContinuousUniform uniformDist = new ContinuousUniform(lowerBound, upperBound);
+					double part1 = Math.Round(uniformDist.Sample(), 0);
 					if (part1 >= minGen && part1 < maxGen)
 					{
 						randValueGen.Add(part1);
@@ -163,7 +167,7 @@ namespace VKPwork
 				else if (q >= (v3 + v1) && q < (v3 + v1 + v2))
 				{
 					Normal normalDistribution = new Normal(mo2, sko2);
-					double part2 = Math.Round(normalDistribution.Sample(), 4);
+					double part2 = Math.Round(normalDistribution.Sample(), 0);
 					if (part2 >= minGen && part2 < maxGen)
 					{
 						randValueGen.Add(part2);
@@ -171,21 +175,38 @@ namespace VKPwork
 				}
 			}
 
-			// Генерация случайного числа нагрузки в цикле с условием
-			for (int i = 0; i < 1000; i++)
-			{
-				Normal normalDist4 = new Normal(mo4, sko4);
-				double part4 = Math.Round(v4 * normalDist4.Sample(), 4);
-
-				Normal normalDist5 = new Normal(mo5, sko5);
-				double part5 = Math.Round(v5 * normalDist5.Sample(), 4);
-
-				double value = Math.Round(part4 + part5, 4);
-				if (value>= minLoad && value < maxLoad)
-				{
-					randValueLoad.Add(value);
-				}
-			}
+			//// Генерация случайного числа нагрузки в цикле с условием
+			//while (randValueLoad.Count < 105409)
+			//{
+			//	double q = rand.NextDouble();
+			//	if (q >= 0 && q < v4)
+			//	{
+			//		Normal normalDistribution = new Normal(mo4, sko4);
+			//		double part4 = Math.Round(normalDistribution.Sample(), 0); 
+			//		if (part4 >= minLoad && part4 < maxLoad)
+			//		{
+			//			randValueLoad.Add(part4);
+			//		}
+			//	}
+			//	else if (q >= v4 && q < (v4 + v5))
+			//	{
+			//		Normal normalDistribution = new Normal(mo5, sko5);
+			//		double part5 = Math.Round(normalDistribution.Sample(), 0); 
+			//		if (part5 >= minLoad && part5 < maxLoad)
+			//		{
+			//			randValueLoad.Add(part5);
+			//		}
+			//	}
+			//	else if (q >= v5 && q < (v4 + v5 + v6))
+			//	{
+			//		Normal normalDistribution = new Normal(mo6, sko6);
+			//		double part6 = Math.Round(normalDistribution.Sample(), 0);
+			//		if (part6 >= minLoad && part6 < maxLoad)
+			//		{
+			//			randValueLoad.Add(part6);
+			//		}
+			//	}
+			//}
 
 			// Путь до файла Excel
 			string folder = @"C:\Users\Анастасия\Desktop\ПроизПрактика";
@@ -199,12 +220,12 @@ namespace VKPwork
 			worksheet.Name = "Случайные величины";
 
 			Console.WriteLine($"Работа алгоритма.\n");
-			Console.WriteLine($"Сучайные числа генерации:\n");
+			//Console.WriteLine($"Сучайные числа генерации:\n");
 
 			// Вывод значений на экран и в excel
 			for (int i = 0; i < randValueGen.Count; i++)
 			{
-				Console.WriteLine(randValueGen[i]);
+				//Console.WriteLine(randValueGen[i]);
 
 				// Получаем диапазон ячеек начиная с ячейки A1
 				Range range = worksheet.Range["A1"];
@@ -214,20 +235,20 @@ namespace VKPwork
 				range.Offset[i + 1, 0].Value = randValueGen[i];
 			}
 
-			Console.WriteLine("\nСучайные числа нагрузки:\n");
+			//Console.WriteLine("\nСучайные числа нагрузки:\n");
 
-			// Вывод значений на экран и в excel
-			for (int i = 0; i < randValueLoad.Count; i++)
-			{
-				Console.WriteLine(randValueLoad[i]);
+			//// Вывод значений на экран и в excel
+			//for (int i = 0; i < randValueLoad.Count; i++)
+			//{
+			//	//Console.WriteLine(randValueLoad[i]);
 
-				// Получаем диапазон ячеек начиная с ячейки A1
-				Range range = worksheet.Range["A1"];
+			//	// Получаем диапазон ячеек начиная с ячейки A1
+			//	Range range = worksheet.Range["A1"];
 
-				// Запись случайной величины в столбец А
-				range.Offset[0, 1].Value = "Нагрузка";
-				range.Offset[i + 1, 1].Value = randValueLoad[i];
-			}
+			//	// Запись случайной величины в столбец А
+			//	range.Offset[0, 1].Value = "Нагрузка";
+			//	range.Offset[i + 1, 1].Value = randValueLoad[i];
+			//}
 
 			workbook.SaveAs(xlsxFile);
 			workbook.Close();
@@ -237,7 +258,9 @@ namespace VKPwork
 			stopwatch.Stop();
 
 			Console.WriteLine($"\nВремя расчета: {stopwatch.ElapsedMilliseconds} мс\n" +
-				$"Файл Excel успешно сохранен по пути: {xlsxFile}\n");
+				$"Файл Excel успешно сохранен по пути: {xlsxFile}\n" +
+				$"Количество СВ генерации: {randValueGen.Count}\n" +
+				$"Количество СВ нагрузки: {randValueLoad.Count}\n");
 
 			//var setSelName = "ny=" + 5;   // Переменная ny = 5 (№ узла = 5)
 			//tableNode.SetSel(setSelName);   // Выборка по переменной
