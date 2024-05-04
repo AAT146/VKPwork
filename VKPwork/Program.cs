@@ -6,6 +6,9 @@ using OfficeOpenXml;
 using MathNet.Numerics.Distributions;
 using System.Diagnostics;
 using Microsoft.Office.Interop.Excel;
+using System.Linq;
+using System.Reflection;
+using System.IO.Ports;
 
 
 namespace VKPwork
@@ -16,88 +19,10 @@ namespace VKPwork
 	public class Program
 	{
 		/// <summary>
-		/// Метод: чтение файла формата Excel.
-		/// </summary>
-		/// <param name="filePath">Файл Excel.</param>
-		/// <returns>Массив данных.</returns>
-		public static double[] ReadFileFromExcel(string filePath)
-		{
-			using (var package = new ExcelPackage(new FileInfo(filePath)))
-			{
-				var worksheet = package.Workbook.Worksheets[0];
-				var data = new double[worksheet.Dimension.Rows];
-
-				for (int i = 1; i <= worksheet.Dimension.Rows; i++)
-				{
-					data[i - 1] = worksheet.Cells[i, 1].GetValue<double>();
-				}
-
-				return data;
-			}
-		}
-
-		/// <summary>
-		/// Получение функциональной зависимости по норм.распр.
-		/// </summary>
-		/// <param name="x">Значение в точке.</param>
-		/// <param name="mean">Математическое ожидание.</param>
-		/// <param name="stdDev">Среднеквадратическое отклонение.</param>
-		/// <param name="cumulative">Флаг: true - интегральная функция распределения; 
-		/// false - весовая функция распределения.</param>
-		/// <returns>Возврат: функция распределения.</returns>
-		public static double DoNormDist(double x, double mean, double stdDev, bool cumulative)
-		{
-			// Создание обекта норм.распр. с заданными МО и СКО
-			Normal normalDistribution = new Normal(mean, stdDev);
-			if (cumulative)
-			{
-				// Интегральная функция распределения
-				return normalDistribution.CumulativeDistribution(x);
-			}
-			else
-			{
-				// Весовая функция распределиня
-				return normalDistribution.Density(x);
-			}
-		}
-
-		/// <summary>
 		/// Упрощенное моделирование.
 		/// </summary>
 		public static void Main()
 		{
-			//// Создание указателя на экземпляр RastrWin и его запуск
-			//IRastr rastr = new Rastr();
-
-			//// Загрузка файл
-			//string file = @"C:\Users\aat146\Desktop\ПроизПрактика\Растр\Режим.rg2";
-			//string shablon = @"C:\Programs\RastrWin3\RastrWin3\SHABLON\режим.rg2";
-
-			//rastr.Load(RG_KOD.RG_REPL, file, shablon);
-
-			//// Объявление объекта, содержащего таблицу "Узлы"
-			//ITable tableNode = (ITable)rastr.Tables.Item("node");
-
-			//// Объявление объекта, содержащего таблицу "Генератор(УР)"
-			//ITable tableGenYR = (ITable)rastr.Tables.Item("Generator");
-
-			//// Объявление объекта, содержащего таблицу "Ветви"
-			//ITable tableVetv = (ITable)rastr.Tables.Item("vetv");
-
-			//// Узлы
-			//ICol numberNode = (ICol)tableNode.Cols.Item("ny");   // Номер
-			//ICol nameNode = (ICol)tableNode.Cols.Item("name");   // Название
-			//ICol activeGen = (ICol)tableNode.Cols.Item("pg");   // Мощность генерации
-			//ICol activeLoad = (ICol)tableNode.Cols.Item("pn");   // Мощность нагрузки
-
-			//// Ветви
-			//ICol staVetv = (ICol)tableVetv.Cols.Item("sta");   // Состояние
-			//ICol tipVetv = (ICol)tableVetv.Cols.Item("tip");   // Тип
-			//ICol nStart = (ICol)tableVetv.Cols.Item("ip");   // Номер начала
-			//ICol nEnd = (ICol)tableVetv.Cols.Item("iq");   // Номер конца
-			//ICol nParall = (ICol)tableVetv.Cols.Item("np");   // Номер параллельности
-			//ICol nameVetv = (ICol)tableVetv.Cols.Item("name");   // Название
-
 			// Создание объекта времени
 			Stopwatch stopwatch = new Stopwatch();
 
@@ -130,17 +55,17 @@ namespace VKPwork
 			double minLoad = 10;
 			double maxLoad = 167;
 
-			// Генерация чисел
+			// Генерация случайных величин (СВ)
 			Random rand = new Random();
 
 			// Лист для хранения СВ генерации
 			List<double> randValueGen = new List<double>();
 
-			// Лсит для хранения СВ нагрузки
+			// Лист для хранения СВ нагрузки
 			List<double> randValueLoad = new List<double>();
 
 			// Генерация случайного числа генерации в цикле с условием
-			while (randValueGen.Count < 105409)
+			while (randValueGen.Count < 1000)
 			{
 				double q = rand.NextDouble();
 
@@ -176,7 +101,7 @@ namespace VKPwork
 			}
 
 			// Генерация случайного числа нагрузки в цикле с условием
-			while (randValueLoad.Count < 105409)
+			while (randValueLoad.Count < 1000)
 			{
 				double q = rand.NextDouble();
 				if (q >= 0 && q < v4)
@@ -208,6 +133,10 @@ namespace VKPwork
 				}
 			}
 
+			// Отсортированные списки по возрастанию
+			var sotrValueGen = randValueGen.OrderBy(x => x).ToList();
+			var sortValueLoad = randValueLoad.OrderBy(x => x).ToList();
+
 			// Путь до файла Excel
 			string folder = @"C:\Users\aat146\Desktop\ПроизПрактика";
 			string fileExcel = "Результат.xlsx";
@@ -218,6 +147,122 @@ namespace VKPwork
 			Workbook workbook = excelApp.Workbooks.Add();
 			Worksheet worksheet = workbook.Sheets.Add();
 			worksheet.Name = "Случайные величины";
+
+			// Создание указателя на экземпляр RastrWin и его запуск
+			IRastr rastr = new Rastr();
+
+			// Загрузка файла
+			string file = @"C:\Users\aat146\Desktop\ПроизПрактика\Растр\Режим.rg2";
+			string shablon = @"C:\Programs\RastrWin3\RastrWin3\SHABLON\режим.rg2";
+
+			rastr.Load(RG_KOD.RG_REPL, file, shablon);
+
+			// Объявление объекта, содержащего таблицу "Узлы"
+			ITable tableNode = (ITable)rastr.Tables.Item("node");
+
+			// Объявление объекта, содержащего таблицу "Генератор(УР)"
+			ITable tableGenYR = (ITable)rastr.Tables.Item("Generator");
+
+			// Объявление объекта, содержащего таблицу "Ветви"
+			ITable tableVetv = (ITable)rastr.Tables.Item("vetv");
+
+			// Объявление объекта, содержащего таблицу "Сечения"
+			ITable tableSechen = (ITable)rastr.Tables.Item("sechen");
+
+			// Узлы
+			ICol numberNode = (ICol)tableNode.Cols.Item("ny");   // Номер
+			ICol nameNode = (ICol)tableNode.Cols.Item("name");   // Название
+			ICol activeGen = (ICol)tableNode.Cols.Item("pg");   // Акт. мощность генерации
+			ICol activeLoad = (ICol)tableNode.Cols.Item("pn");   // Акт. мощность нагрузки
+
+			// Генераторы(УР)
+			ICol nAgr = (ICol)tableGenYR.Cols.Item("Num"); // Номер агрегата
+			ICol nameGenYR = (ICol)tableGenYR.Cols.Item("Name"); // Название
+			ICol pGenYR = (ICol)tableGenYR.Cols.Item("P"); // Акт. мощность генерации
+
+			// Ветви
+			ICol staVetv = (ICol)tableVetv.Cols.Item("sta");   // Состояние
+			ICol tipVetv = (ICol)tableVetv.Cols.Item("tip");   // Тип
+			ICol nStart = (ICol)tableVetv.Cols.Item("ip");   // Номер начала
+			ICol nEnd = (ICol)tableVetv.Cols.Item("iq");   // Номер конца
+			ICol nParall = (ICol)tableVetv.Cols.Item("np");   // Номер параллельности
+			ICol nameVetv = (ICol)tableVetv.Cols.Item("name");   // Название
+			ICol pVetvEnd = (ICol)tableVetv.Cols.Item("pl_iq");   // Поток P в конце ветви
+
+			// Сечения
+			ICol nSech = (ICol)tableSechen.Cols.Item("ns"); // Номер сечения
+			ICol nameSech = (ICol)tableSechen.Cols.Item("name"); // Имя сечения
+			ICol minSech = (ICol)tableSechen.Cols.Item("pmin"); // Минимальное значение
+			ICol maxSech = (ICol)tableSechen.Cols.Item("pmax"); // Максимальное значение
+			ICol valueSech = (ICol)tableSechen.Cols.Item("psech"); // Полученное значение
+
+			// Лист для хранения перетока по Пеледуй - Сухой Лог I и II цепь
+			List<double> v1PeledSyxLog = new List<double>();
+			List<double> v2PeledSyxLog = new List<double>();
+
+			// Лист для хранения перетока по Таксимо - Мамакан I и II цепь
+			List<double> v1TaksimoMamakan = new List<double>();
+			List<double> v2TaksimoMamakan = new List<double>();
+
+			// Лист для хранения перетока по КС
+			List<double> ksPeledSyxLog = new List<double>();
+			List<double> ksTaksimoMamakan = new List<double>();
+
+			// Цикл расчета перетоков в RastrWin3
+			for (int i = 0; i < 1000; i++)
+			{
+				// Присвоение нового числа мощности генерации
+				var setSelAgr = "Nym=" + 6;
+				tableGenYR.SetSel(setSelAgr);
+				var index1 = tableGenYR.FindNextSel[-1];
+				pGenYR.Z[index1] = sotrValueGen[i];
+
+				// Присвоение нового числа мощности нагрузки
+				var setSelNy = "ny=" + 5;
+				tableNode.SetSel(setSelNy);
+				var index2 = tableNode.FindNextSel[-1];
+				activeLoad.Z[index1] = sortValueLoad[i];
+
+				// Расчет УР
+				_ = rastr.rgm("");
+
+				// Считывание перетоков по каждой ветви
+				var setSelVetv1 = "ip=" + 2 + "&" + "iq=" + 3 + "&" + "np=" + 1;
+				tableVetv.SetSel(setSelVetv1);
+				var index3 = tableVetv.FindNextSel[-1];
+				v1PeledSyxLog.Add(pVetvEnd.Z[index3]);
+
+				var setSelVetv2 = "ip=" + 2 + "&" + "iq=" + 3 + "&" + "np=" + 2;
+				tableVetv.SetSel(setSelVetv2);
+				var index4 = tableVetv.FindNextSel[-1];
+				v2PeledSyxLog.Add(pVetvEnd.Z[index4]);
+
+				var setSelVetv3 = "ip=" + 2 + "&" + "iq=" + 4 + "&" + "np=" + 1;
+				tableVetv.SetSel(setSelVetv3);
+				var index5 = tableVetv.FindNextSel[-1];
+				v1TaksimoMamakan.Add(pVetvEnd.Z[index5]);
+
+				var setSelVetv4 = "ip=" + 2 + "&" + "iq=" + 4 + "&" + "np=" + 2;
+				tableVetv.SetSel(setSelVetv4);
+				var index6 = tableVetv.FindNextSel[-1];
+				v1TaksimoMamakan.Add(pVetvEnd.Z[index6]);
+
+				// Считывание перетоков по каждому КС
+				var setSelNs1 = "ns=" + 1;
+				tableSechen.SetSel(setSelNs1);
+				var index7 = tableNode.FindNextSel[-1];
+				ksPeledSyxLog.Add(valueSech.Z[index7]);
+				
+				var setSelNs2 = "ns=" + 2;
+				tableSechen.SetSel(setSelNs2);
+				var index8 = tableNode.FindNextSel[-1];
+				ksTaksimoMamakan.Add(valueSech.Z[index8]);
+			}
+
+
+
+
+
 
 			Console.WriteLine($"Работа алгоритма.\n");
 			//Console.WriteLine($"Сучайные числа генерации:\n");
@@ -249,6 +294,8 @@ namespace VKPwork
 				range.Offset[0, 1].Value = "Нагрузка";
 				range.Offset[i + 1, 1].Value = randValueLoad[i];
 			}
+
+
 
 			workbook.SaveAs(xlsxFile);
 			workbook.Close();
