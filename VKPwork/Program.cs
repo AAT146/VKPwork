@@ -139,10 +139,15 @@ namespace VKPwork
 			IRastr rastr = new Rastr();
 
 			// Загрузка файла
-			string file = @"C:\Users\aat146\Desktop\ПроизПрактика\Растр\Режим.rg2";
-			string shablon = @"C:\Programs\RastrWin3\RastrWin3\SHABLON\режим.rg2";
+			string fileRegim = @"C:\Users\Анастасия\Desktop\ПроизПрактика\Растр\Режим.rg2";
+			string shablonRegim = @"C:\Program Files (x86)\RastrWin3\RastrWin3\SHABLON\режим.rg2";
 
-			rastr.Load(RG_KOD.RG_REPL, file, shablon);
+			rastr.Load(RG_KOD.RG_REPL, fileRegim, shablonRegim);
+
+			string fileSechen = @"C:\Users\Анастасия\Desktop\ПроизПрактика\Растр\Сечения.sch";
+			string shablonSechen = @"C:\Program Files (x86)\RastrWin3\RastrWin3\SHABLON\сечения.rg2";
+
+			rastr.Load(RG_KOD.RG_REPL, fileSechen, shablonSechen);
 
 			// Объявление объекта, содержащего таблицу "Узлы"
 			ITable tableNode = (ITable)rastr.Tables.Item("node");
@@ -260,7 +265,7 @@ namespace VKPwork
 			}
 
 			// Путь до файла Excel
-			string folder = @"C:\Users\aat146\Desktop\ПроизПрактика";
+			string folder = @"C:\Users\Анастасия\Desktop\ПроизПрактика";
 			string fileExcel = "Результат.xlsx";
 			string xlsxFile = Path.Combine(folder, fileExcel);
 
