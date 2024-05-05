@@ -29,6 +29,8 @@ namespace VKPwork
 			// Засекаем время начала операции
 			stopwatch.Start();
 
+			Console.WriteLine($"Работа алгоритма.\n");
+
 			// Константы для искусственного з.распр. генерации ГЭС
 			double v3 = 0.42;
 			double sko3 = 3.7;
@@ -133,21 +135,6 @@ namespace VKPwork
 				}
 			}
 
-			// Отсортированные списки по возрастанию
-			var sotrValueGen = randValueGen.OrderBy(x => x).ToList();
-			var sortValueLoad = randValueLoad.OrderBy(x => x).ToList();
-
-			// Путь до файла Excel
-			string folder = @"C:\Users\aat146\Desktop\ПроизПрактика";
-			string fileExcel = "Результат.xlsx";
-			string xlsxFile = Path.Combine(folder, fileExcel);
-
-			// Создание книги и листа
-			Application excelApp = new Application();
-			Workbook workbook = excelApp.Workbooks.Add();
-			Worksheet worksheet = workbook.Sheets.Add();
-			worksheet.Name = "Случайные величины";
-
 			// Создание указателя на экземпляр RastrWin и его запуск
 			IRastr rastr = new Rastr();
 
@@ -208,6 +195,10 @@ namespace VKPwork
 			List<double> ksPeledSyxLog = new List<double>();
 			List<double> ksTaksimoMamakan = new List<double>();
 
+			double numberPSL = 0;
+			double numberTM = 0;
+			double numberYR = 0;
+
 			// Цикл расчета перетоков в RastrWin3
 			for (int i = 0; i < 1000; i++)
 			{
@@ -215,34 +206,35 @@ namespace VKPwork
 				var setSelAgr = "Nym=" + 6;
 				tableGenYR.SetSel(setSelAgr);
 				var index1 = tableGenYR.FindNextSel[-1];
-				pGenYR.Z[index1] = sotrValueGen[i];
+				pGenYR.Z[index1] = randValueGen[i];
 
 				// Присвоение нового числа мощности нагрузки
 				var setSelNy = "ny=" + 5;
 				tableNode.SetSel(setSelNy);
 				var index2 = tableNode.FindNextSel[-1];
-				activeLoad.Z[index1] = sortValueLoad[i];
+				activeLoad.Z[index1] = randValueLoad[i];
 
 				// Расчет УР
 				_ = rastr.rgm("");
+				numberYR += 1;
 
 				// Считывание перетоков по каждой ветви
-				var setSelVetv1 = "ip=" + 2 + "&" + "iq=" + 3 + "&" + "np=" + 1;
+				var setSelVetv1 = "ip=" + 3 + "&" + "iq=" + 2 + "&" + "np=" + 1;
 				tableVetv.SetSel(setSelVetv1);
 				var index3 = tableVetv.FindNextSel[-1];
 				v1PeledSyxLog.Add(pVetvEnd.Z[index3]);
 
-				var setSelVetv2 = "ip=" + 2 + "&" + "iq=" + 3 + "&" + "np=" + 2;
+				var setSelVetv2 = "ip=" + 3 + "&" + "iq=" + 2 + "&" + "np=" + 2;
 				tableVetv.SetSel(setSelVetv2);
 				var index4 = tableVetv.FindNextSel[-1];
 				v2PeledSyxLog.Add(pVetvEnd.Z[index4]);
 
-				var setSelVetv3 = "ip=" + 2 + "&" + "iq=" + 4 + "&" + "np=" + 1;
+				var setSelVetv3 = "ip=" + 4 + "&" + "iq=" + 2 + "&" + "np=" + 1;
 				tableVetv.SetSel(setSelVetv3);
 				var index5 = tableVetv.FindNextSel[-1];
 				v1TaksimoMamakan.Add(pVetvEnd.Z[index5]);
 
-				var setSelVetv4 = "ip=" + 2 + "&" + "iq=" + 4 + "&" + "np=" + 2;
+				var setSelVetv4 = "ip=" + 4 + "&" + "iq=" + 2 + "&" + "np=" + 2;
 				tableVetv.SetSel(setSelVetv4);
 				var index6 = tableVetv.FindNextSel[-1];
 				v1TaksimoMamakan.Add(pVetvEnd.Z[index6]);
@@ -252,50 +244,70 @@ namespace VKPwork
 				tableSechen.SetSel(setSelNs1);
 				var index7 = tableNode.FindNextSel[-1];
 				ksPeledSyxLog.Add(valueSech.Z[index7]);
+				if (valueSech.Z[index7] > maxSech.Z[index7])
+				{
+					numberPSL += 1;
+				}
 				
 				var setSelNs2 = "ns=" + 2;
 				tableSechen.SetSel(setSelNs2);
 				var index8 = tableNode.FindNextSel[-1];
 				ksTaksimoMamakan.Add(valueSech.Z[index8]);
+				if (valueSech.Z[index8] > maxSech.Z[index8])
+				{
+					numberTM += 1;
+				}
 			}
 
+			// Путь до файла Excel
+			string folder = @"C:\Users\aat146\Desktop\ПроизПрактика";
+			string fileExcel = "Результат.xlsx";
+			string xlsxFile = Path.Combine(folder, fileExcel);
 
+			// Создание книги и листа
+			Application excelApp = new Application();
+			Workbook workbook = excelApp.Workbooks.Add();
+			Worksheet worksheet = workbook.Sheets.Add();
+			worksheet.Name = "Случайные величины";
 
-
-
-
-			Console.WriteLine($"Работа алгоритма.\n");
-			//Console.WriteLine($"Сучайные числа генерации:\n");
-
-			// Вывод значений на экран и в excel
-			for (int i = 0; i < randValueGen.Count; i++)
+			// Запись значений в файл Excel
+			for (int i = 0; i < 1000; i++)
 			{
-				//Console.WriteLine(randValueGen[i]);
-
 				// Получаем диапазон ячеек начиная с ячейки A1
 				Range range = worksheet.Range["A1"];
 
-				// Запись случайной величины в столбец А
+				// Запись случайной величины в столбец А - генерация
 				range.Offset[0, 0].Value = "Генерация";
 				range.Offset[i + 1, 0].Value = randValueGen[i];
-			}
 
-			Console.WriteLine("\nСучайные числа нагрузки:\n");
-
-			// Вывод значений на экран и в excel
-			for (int i = 0; i < randValueLoad.Count; i++)
-			{
-				//Console.WriteLine(randValueLoad[i]);
-
-				// Получаем диапазон ячеек начиная с ячейки A1
-				Range range = worksheet.Range["A1"];
-
-				// Запись случайной величины в столбец А
+				// Запись случайной величины в столбец B - нагрузка
 				range.Offset[0, 1].Value = "Нагрузка";
 				range.Offset[i + 1, 1].Value = randValueLoad[i];
+
+				// Запись случайной величины в столбец C - Пеледуй - Сухой Лог I цепь
+				range.Offset[0, 2].Value = "Пеледуй - Сухой Лог I цепь";
+				range.Offset[i + 1, 2].Value = v1PeledSyxLog[i];
+
+				// Запись случайной величины в столбец D - Пеледуй - Сухой Лог II цепь
+				range.Offset[0, 3].Value = "Пеледуй - Сухой Лог II цепь";
+				range.Offset[i + 1, 3].Value = v2PeledSyxLog[i];
+
+				// Запись случайной величины в столбец E - Таксимо - Мамакан I цепь
+				range.Offset[0, 4].Value = "Таксимо - Мамакан I цепь";
+				range.Offset[i + 1, 4].Value = v1TaksimoMamakan[i];
+
+				// Запись случайной величины в столбец F - Таксимо - Мамакан II цепь
+				range.Offset[0, 5].Value = "Таксимо - Мамакан II цепь";
+				range.Offset[i + 1, 5].Value = v2TaksimoMamakan[i];
+
+				// Запись случайной величины в столбец G - КС Пеледуй - Сухой Лог
+				range.Offset[0, 6].Value = "КС Пеледуй - Сухой Лог";
+				range.Offset[i + 1, 6].Value = ksPeledSyxLog[i];
+
+				// Запись случайной величины в столбец H - КС Таксимо - Мамакан
+				range.Offset[0, 7].Value = "КС Таксимо - Мамакан";
+				range.Offset[i + 1, 7].Value = ksTaksimoMamakan[i];
 			}
-
-
 
 			workbook.SaveAs(xlsxFile);
 			workbook.Close();
@@ -307,33 +319,12 @@ namespace VKPwork
 			Console.WriteLine($"\nВремя расчета: {stopwatch.ElapsedMilliseconds} мс\n" +
 				$"Файл Excel успешно сохранен по пути: {xlsxFile}\n" +
 				$"Количество СВ генерации: {randValueGen.Count}\n" +
-				$"Количество СВ нагрузки: {randValueLoad.Count}\n");
+				$"Количество СВ нагрузки: {randValueLoad.Count}\n" +
+				$"Количество просчитанных УР: {numberYR}\n" +
+				$"Количество случаев превышения МДП в КС Пеледуй - Сухой Лог: {numberPSL}\n" +
+				$"Количество случаев превышения МДП в КС Таксимо - Мамакан: {numberTM}\n");
 
 			Console.ReadKey();
-
-			//var setSelName = "ny=" + 5;   // Переменная ny = 5 (№ узла = 5)
-			//tableNode.SetSel(setSelName);   // Выборка по переменной
-			//var index = tableNode.FindNextSel[-1];   // Возврат индекса след.строки, удовл-ей выборке (искл: -1)
-			//activeLoad.Z[index] = rdm;   // Переменная с найденным индексом в столбце Название
-			//Console.WriteLine($"Узел № {index} || Нагрузка: {activeLoad.Z[index]}");
-
-
-			//int p = 500;
-			//powerActiveGeneration.Z[index] = p;
-
-			//var setSelVetv = "ip=" + 2 + "&" + "iq=" + 3 + "&" + "np=" + 2;
-			//tableVetv.SetSel(setSelVetv);
-			//var number = tableVetv.FindNextSel[-1];
-			//staVetv.Z[number] = 1;    // 1 - отключение; 0 -включение
-			//var name1v = nameVetv.Z[number];
-			//Console.WriteLine($"Название ветви: {name1v}");
-
-			// Расчет УР
-			//_ = rastr.rgm("");
-
-			//// Сохранение результатов
-			//string fileNew = @"C:\Users\aat146\Desktop\ПроизПрактика\Растр\Режим2.rg2";
-			//rastr.Save(fileNew, shablon);
 		}
 	}
 }
