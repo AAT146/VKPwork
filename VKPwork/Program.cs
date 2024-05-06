@@ -33,6 +33,7 @@ namespace VKPwork
 			{
 				throw new ArgumentException("Списки X и Y должны иметь одинаковую длину.");
 			}
+
 			List<double> results = new List<double>();
 
 			for (int i = 0; i < X.Count; i++)
@@ -67,7 +68,7 @@ namespace VKPwork
 				var worksheet = package.Workbook.Worksheets[0];
 				List<double> data = new List<double>(worksheet.Dimension.Rows);
 
-				for (int i = 0; i <= worksheet.Dimension.Rows; i++)
+				for (int i = 1; i <= worksheet.Dimension.Rows; i++)
 				{
 					data.Add(worksheet.Cells[i, 1].GetValue<double>());
 				}
@@ -100,8 +101,8 @@ namespace VKPwork
 			double lowerBound = 23;
 			double upperBound = 83.05;
 			double minGen = 8;
-			double maxGen = 87
-				;
+			double maxGen = 87;
+
 			// Константы для искусственного з.распр. нагрузки
 			double v4 = 0.43;
 			double sko4 = 5.8;
@@ -264,7 +265,7 @@ namespace VKPwork
 			for (int i = 0; i < 105409; i++)
 			{
 				// Присвоение нового числа мощности генерации
-				var setSelAgr = "Nym=" + 6;
+				var setSelAgr = "Num=" + 2;
 				tableGenYR.SetSel(setSelAgr);
 				var index1 = tableGenYR.FindNextSel[-1];
 				pGenYR.Z[index1] = randValueGen[i];
