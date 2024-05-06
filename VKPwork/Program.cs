@@ -18,7 +18,6 @@ namespace VKPwork
 	/// </summary>
 	public class ComparisonHelper
 	{
-		// ГОВНО
 		/// <summary>
 		/// Метод: сравнение значений P.КС с МДП.
 		/// </summary>
@@ -29,18 +28,17 @@ namespace VKPwork
 		/// исходных списков.</exception>
 		public static List<double> CompareLists(List<double> X, List<double> Y)
 		{
-			//if (X.Count != Y.Count)
-			//{
-			//	throw new ArgumentException("Списки X и Y должны иметь одинаковую длину.");
-			//}
+			if (X.Count != Y.Count)
+			{
+				throw new ArgumentException("Списки X и Y должны иметь одинаковую длину.");
+			}
 
 			List<double> results = new List<double>();
 
 			for (int i = 0; i < X.Count; i++)
 			{
-				double delta = X[i] - Y[i];
-				// Если true, то возврат delta; Если false (< либо =), то возврат 0.
-				double result = delta > 0 ? delta : 0;
+				// Если true, то возврат 1; Если false (< либо =), то возврат 0.
+				double result = X[i] > X[i] ? 1 : 0;
 				results.Add(result);
 			}
 
@@ -126,7 +124,7 @@ namespace VKPwork
 			List<double> randValueLoad = new List<double>();
 
 			// Генерация случайного числа ГЕНЕРАЦИИ в цикле с условием
-			while (randValueGen.Count < 1)
+			while (randValueGen.Count < 105409)
 			{
 				double q = rand.NextDouble();
 
@@ -162,7 +160,7 @@ namespace VKPwork
 			}
 
 			// Генерация случайного числа НАГРУЗКИ в цикле с условием
-			while (randValueLoad.Count < 1)
+			while (randValueLoad.Count < 105409)
 			{
 				double q = rand.NextDouble();
 				if (q >= 0 && q < v4)
@@ -262,7 +260,7 @@ namespace VKPwork
 			double numberYR = 0;
 
 			// Цикл расчета перетоков в RastrWin3
-			for (int i = 0; i < 1; i++)
+			for (int i = 0; i < 105409; i++)
 			{
 				// Присвоение нового числа мощности генерации
 				var setSelAgr = "Num=" + 2;
@@ -280,11 +278,6 @@ namespace VKPwork
 				// Расчет УР
 				_ = rastr.rgm("");
 				numberYR += 1;
-
-				// Сохранение результатов
-				string fileNew = @"C:\Users\Анастасия\Desktop\ПроизПрактика\Растр\Режим2.rg2";
-				string shablon = @"C:\Program Files (x86)\RastrWin3\RastrWin3\SHABLON\режим.rg2";
-				rastr.Save(fileNew, shablon);
 
 				// Считывание перетоков по каждой ветви
 				var setSelVetv1 = "ip=" + 3 + "&" + "iq=" + 2 + "&" + "np=" + 1;
@@ -322,14 +315,23 @@ namespace VKPwork
 			// Файл Excel значений МДП по КС
 			string xlsxMdpPeledSyxLog = @"C:\Users\Анастасия\Desktop\ПроизПрактика\Растр\KsPeledSyxLog.xlsx";
 			string xlsxMdpTaksimoMamakan = @"C:\Users\Анастасия\Desktop\ПроизПрактика\Растр\KsTaksimoMamakan.xlsx";
+			string xlsxPYRPeledSyxLog = @"C:\Users\Анастасия\Desktop\ПроизПрактика\Растр\PYRPeledSyxLog.xlsx";
+			string xlsxPYRTaksimoMamakan = @"C:\Users\Анастасия\Desktop\ПроизПрактика\Растр\PYRTaksimoMamakan.xlsx";
+			string xlsxPYRTaksimoMamakan1 = @"C:\Users\Анастасия\Desktop\ПроизПрактика\Растр\PYRTaksimoMamakan1.xlsx";
 
 			// Чтение данных из файла Excel
 			List<double> mdpPeledSyxLog = ReadFileFromExcel(xlsxMdpPeledSyxLog);
 			List<double> mdpTaksimoMamakan = ReadFileFromExcel(xlsxMdpTaksimoMamakan);
+			List<double> pyrPeledSyxLog = ReadFileFromExcel(xlsxPYRPeledSyxLog);
+			List<double> pyrTaksimoMamakan = ReadFileFromExcel(xlsxPYRTaksimoMamakan);
+			List<double> pyrTaksimoMamakan1 = ReadFileFromExcel(xlsxPYRTaksimoMamakan1);
 
 			// Определение разницы между КС и МДП
-			List<double> deltaPSL = ComparisonHelper.CompareLists(ksPeledSyxLog, mdpPeledSyxLog);
-			List<double> deltaTM = ComparisonHelper.CompareLists(ksTaksimoMamakan, mdpTaksimoMamakan);
+			List<double> smzyPSL = ComparisonHelper.CompareLists(ksPeledSyxLog, mdpPeledSyxLog);
+			List<double> smzyTM = ComparisonHelper.CompareLists(ksTaksimoMamakan, mdpTaksimoMamakan);
+			List<double> pyrPSL = ComparisonHelper.CompareLists(ksPeledSyxLog, pyrPeledSyxLog);
+			List<double> pyrTM = ComparisonHelper.CompareLists(ksTaksimoMamakan, pyrTaksimoMamakan);
+			List<double> pyrTM1 = ComparisonHelper.CompareLists(ksTaksimoMamakan, pyrTaksimoMamakan1);
 
 			// Путь до файла Excel Результат
 			string folder = @"C:\Users\Анастасия\Desktop\ПроизПрактика";
@@ -343,7 +345,7 @@ namespace VKPwork
 			worksheet.Name = "Случайные величины";
 
 			// Запись значений в файл Excel
-			for (int i = 0; i < 1; i++)
+			for (int i = 0; i < 105409; i++)
 			{
 				// Получаем диапазон ячеек начиная с ячейки A1
 				Range range = worksheet.Range["A1"];
@@ -380,13 +382,25 @@ namespace VKPwork
 				range.Offset[0, 7].Value = "КС Таксимо - Мамакан";
 				range.Offset[i + 1, 7].Value = ksTaksimoMamakan[i];
 
-				// Запись случайной величины в столбец I - delta КС_МДП (Пеледуй - Сухой Лог)
-				range.Offset[0, 8].Value = "delta КС_МДП (П-СХ)";
-				range.Offset[i + 1, 8].Value = deltaPSL[i];
+				// Запись случайной величины в столбец I - СМЗУ КС_МДП (Пеледуй - Сухой Лог)
+				range.Offset[0, 8].Value = "СМЗУ КС_МДП (П-СХ)";
+				range.Offset[i + 1, 8].Value = smzyPSL[i];
 
-				// Запись случайной величины в столбец I - delta КС_МДП (Пеледуй - Сухой Лог)
-				range.Offset[0, 9].Value = "delta КС_МДП (Т-М)";
-				range.Offset[i + 1, 9].Value = deltaTM[i];
+				// Запись случайной величины в столбец J - СМЗУ КС_МДП (Таксимо - Мамакан)
+				range.Offset[0, 9].Value = "СМЗУ КС_МДП (Т-М)";
+				range.Offset[i + 1, 9].Value = smzyTM[i];
+
+				// Запись случайной величины в столбец K - ПУР КС_МДП (Пеледуй - Сухой Лог)
+				range.Offset[0, 10].Value = "ПУР КС_МДП (П-СХ)";
+				range.Offset[i + 1, 10].Value = pyrPSL[i];
+
+				// Запись случайной величины в столбец L - ПУР КС_МДП (Таксимо - Мамакан)
+				range.Offset[0, 11].Value = "ПУР КС_МДП (Т-М)";
+				range.Offset[i + 1, 11].Value = pyrTM[i];
+
+				// Запись случайной величины в столбец M - ПУР1 КС_МДП (Таксимо - Мамакан)
+				range.Offset[0, 12].Value = "ПУР1 КС_МДП (Т-М)";
+				range.Offset[i + 1, 12].Value = pyrTM1[i];
 			}
 
 			workbook.SaveAs(xlsxFile);
