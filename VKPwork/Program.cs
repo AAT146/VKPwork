@@ -212,46 +212,20 @@ namespace VKPwork
 			// Объявление объекта, содержащего таблицу "Генератор(УР)"
 			ITable tableGenYR = (ITable)rastr.Tables.Item("Generator");
 
-			// Объявление объекта, содержащего таблицу "Ветви"
-			ITable tableVetv = (ITable)rastr.Tables.Item("vetv");
-
 			// Объявление объекта, содержащего таблицу "Сечения"
 			ITable tableSechen = (ITable)rastr.Tables.Item("sechen");
 
 			// Узлы
 			ICol numberNode = (ICol)tableNode.Cols.Item("ny");   // Номер
-			ICol nameNode = (ICol)tableNode.Cols.Item("name");   // Название
-			ICol activeGen = (ICol)tableNode.Cols.Item("pg");   // Акт. мощность генерации
 			ICol activeLoad = (ICol)tableNode.Cols.Item("pn");   // Акт. мощность нагрузки
 
 			// Генераторы(УР)
 			ICol nAgr = (ICol)tableGenYR.Cols.Item("Num"); // Номер агрегата
-			ICol nameGenYR = (ICol)tableGenYR.Cols.Item("Name"); // Название
 			ICol pGenYR = (ICol)tableGenYR.Cols.Item("P"); // Акт. мощность генерации
-
-			// Ветви
-			ICol staVetv = (ICol)tableVetv.Cols.Item("sta");   // Состояние
-			ICol tipVetv = (ICol)tableVetv.Cols.Item("tip");   // Тип
-			ICol nStart = (ICol)tableVetv.Cols.Item("ip");   // Номер начала
-			ICol nEnd = (ICol)tableVetv.Cols.Item("iq");   // Номер конца
-			ICol nParall = (ICol)tableVetv.Cols.Item("np");   // Номер параллельности
-			ICol nameVetv = (ICol)tableVetv.Cols.Item("name");   // Название
-			ICol pVetvEnd = (ICol)tableVetv.Cols.Item("pl_iq");   // Поток P в конце ветви
 
 			// Сечения
 			ICol nSech = (ICol)tableSechen.Cols.Item("ns"); // Номер сечения
-			ICol nameSech = (ICol)tableSechen.Cols.Item("name"); // Имя сечения
-			ICol minSech = (ICol)tableSechen.Cols.Item("pmin"); // Минимальное значение
-			ICol maxSech = (ICol)tableSechen.Cols.Item("pmax"); // Максимальное значение
 			ICol valueSech = (ICol)tableSechen.Cols.Item("psech"); // Полученное значение
-
-			// Лист для хранения перетока по Пеледуй - Сухой Лог I и II цепь
-			List<double> v1PeledSyxLog = new List<double>();
-			List<double> v2PeledSyxLog = new List<double>();
-
-			// Лист для хранения перетока по Таксимо - Мамакан I и II цепь
-			List<double> v1TaksimoMamakan = new List<double>();
-			List<double> v2TaksimoMamakan = new List<double>();
 
 			// Лист для хранения перетока по КС
 			List<double> ksPeledSyxLog = new List<double>();
@@ -278,27 +252,6 @@ namespace VKPwork
 				// Расчет УР
 				_ = rastr.rgm("");
 				numberYR += 1;
-
-				// Считывание перетоков по каждой ветви
-				var setSelVetv1 = "ip=" + 3 + "&" + "iq=" + 2 + "&" + "np=" + 1;
-				tableVetv.SetSel(setSelVetv1);
-				var index3 = tableVetv.FindNextSel[-1];
-				v1PeledSyxLog.Add(Math.Round(pVetvEnd.Z[index3], 0));
-
-				var setSelVetv2 = "ip=" + 3 + "&" + "iq=" + 2 + "&" + "np=" + 2;
-				tableVetv.SetSel(setSelVetv2);
-				var index4 = tableVetv.FindNextSel[-1];
-				v2PeledSyxLog.Add(Math.Round(pVetvEnd.Z[index4], 0));
-
-				var setSelVetv3 = "ip=" + 4 + "&" + "iq=" + 2 + "&" + "np=" + 1;
-				tableVetv.SetSel(setSelVetv3);
-				var index5 = tableVetv.FindNextSel[-1];
-				v1TaksimoMamakan.Add(Math.Round(pVetvEnd.Z[index5], 0));
-
-				var setSelVetv4 = "ip=" + 4 + "&" + "iq=" + 2 + "&" + "np=" + 2;
-				tableVetv.SetSel(setSelVetv4);
-				var index6 = tableVetv.FindNextSel[-1];
-				v2TaksimoMamakan.Add(Math.Round(pVetvEnd.Z[index6], 0));
 
 				// Считывание перетоков по каждому КС
 				var setSelNs1 = "ns=" + 1;
@@ -342,7 +295,7 @@ namespace VKPwork
 			Application excelApp = new Application();
 			Workbook workbook = excelApp.Workbooks.Add();
 			Worksheet worksheet = workbook.Sheets.Add();
-			worksheet.Name = "Случайные величины";
+			worksheet.Name = "Результат";
 
 			// Запись значений в файл Excel
 			for (int i = 0; i < 105409; i++)
@@ -358,49 +311,33 @@ namespace VKPwork
 				range.Offset[0, 1].Value = "Нагрузка";
 				range.Offset[i + 1, 1].Value = randValueLoad[i];
 
-				// Запись случайной величины в столбец C - Пеледуй - Сухой Лог I цепь
-				range.Offset[0, 2].Value = "Пеледуй - Сухой Лог I цепь";
-				range.Offset[i + 1, 2].Value = v1PeledSyxLog[i];
+				// Запись случайной величины в столбец C - КС Пеледуй - Сухой Лог
+				range.Offset[0, 2].Value = "КС Пеледуй - Сухой Лог";
+				range.Offset[i + 1, 2].Value = ksPeledSyxLog[i];
 
-				// Запись случайной величины в столбец D - Пеледуй - Сухой Лог II цепь
-				range.Offset[0, 3].Value = "Пеледуй - Сухой Лог II цепь";
-				range.Offset[i + 1, 3].Value = v2PeledSyxLog[i];
+				// Запись случайной величины в столбец D - КС Таксимо - Мамакан
+				range.Offset[0, 3].Value = "КС Таксимо - Мамакан";
+				range.Offset[i + 1, 3].Value = ksTaksimoMamakan[i];
 
-				// Запись случайной величины в столбец E - Таксимо - Мамакан I цепь
-				range.Offset[0, 4].Value = "Таксимо - Мамакан I цепь";
-				range.Offset[i + 1, 4].Value = v1TaksimoMamakan[i];
+				// Запись случайной величины в столбец E - СМЗУ КС_МДП (Пеледуй - Сухой Лог)
+				range.Offset[0, 4].Value = "СМЗУ КС_МДП (П-СХ)";
+				range.Offset[i + 1, 4].Value = smzyPSL[i];
 
-				// Запись случайной величины в столбец F - Таксимо - Мамакан II цепь
-				range.Offset[0, 5].Value = "Таксимо - Мамакан II цепь";
-				range.Offset[i + 1, 5].Value = v2TaksimoMamakan[i];
+				// Запись случайной величины в столбец F - СМЗУ КС_МДП (Таксимо - Мамакан)
+				range.Offset[0, 5].Value = "СМЗУ КС_МДП (Т-М)";
+				range.Offset[i + 1, 5].Value = smzyTM[i];
 
-				// Запись случайной величины в столбец G - КС Пеледуй - Сухой Лог
-				range.Offset[0, 6].Value = "КС Пеледуй - Сухой Лог";
-				range.Offset[i + 1, 6].Value = ksPeledSyxLog[i];
+				// Запись случайной величины в столбец J - ПУР КС_МДП (Пеледуй - Сухой Лог)
+				range.Offset[0, 6].Value = "ПУР КС_МДП (П-СХ)";
+				range.Offset[i + 1, 6].Value = pyrPSL[i];
 
-				// Запись случайной величины в столбец H - КС Таксимо - Мамакан
-				range.Offset[0, 7].Value = "КС Таксимо - Мамакан";
-				range.Offset[i + 1, 7].Value = ksTaksimoMamakan[i];
+				// Запись случайной величины в столбец H - ПУР КС_МДП (Таксимо - Мамакан)
+				range.Offset[0, 7].Value = "ПУР КС_МДП (Т-М)";
+				range.Offset[i + 1, 7].Value = pyrTM[i];
 
-				// Запись случайной величины в столбец I - СМЗУ КС_МДП (Пеледуй - Сухой Лог)
-				range.Offset[0, 8].Value = "СМЗУ КС_МДП (П-СХ)";
-				range.Offset[i + 1, 8].Value = smzyPSL[i];
-
-				// Запись случайной величины в столбец J - СМЗУ КС_МДП (Таксимо - Мамакан)
-				range.Offset[0, 9].Value = "СМЗУ КС_МДП (Т-М)";
-				range.Offset[i + 1, 9].Value = smzyTM[i];
-
-				// Запись случайной величины в столбец K - ПУР КС_МДП (Пеледуй - Сухой Лог)
-				range.Offset[0, 10].Value = "ПУР КС_МДП (П-СХ)";
-				range.Offset[i + 1, 10].Value = pyrPSL[i];
-
-				// Запись случайной величины в столбец L - ПУР КС_МДП (Таксимо - Мамакан)
-				range.Offset[0, 11].Value = "ПУР КС_МДП (Т-М)";
-				range.Offset[i + 1, 11].Value = pyrTM[i];
-
-				// Запись случайной величины в столбец M - ПУР1 КС_МДП (Таксимо - Мамакан)
-				range.Offset[0, 12].Value = "ПУР1 КС_МДП (Т-М)";
-				range.Offset[i + 1, 12].Value = pyrTM1[i];
+				// Запись случайной величины в столбец I - ПУР1 КС_МДП (Таксимо - Мамакан)
+				range.Offset[0, 8].Value = "ПУР1 КС_МДП (Т-М)";
+				range.Offset[i + 1, 8].Value = pyrTM1[i];
 			}
 
 			workbook.SaveAs(xlsxFile);
