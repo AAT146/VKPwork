@@ -29,10 +29,10 @@ namespace VKPwork
 		/// исходных списков.</exception>
 		public static List<double> CompareLists(List<double> X, List<double> Y)
 		{
-			if (X.Count != Y.Count)
-			{
-				throw new ArgumentException("Списки X и Y должны иметь одинаковую длину.");
-			}
+			//if (X.Count != Y.Count)
+			//{
+			//	throw new ArgumentException("Списки X и Y должны иметь одинаковую длину.");
+			//}
 
 			List<double> results = new List<double>();
 
@@ -126,7 +126,7 @@ namespace VKPwork
 			List<double> randValueLoad = new List<double>();
 
 			// Генерация случайного числа ГЕНЕРАЦИИ в цикле с условием
-			while (randValueGen.Count < 105409)
+			while (randValueGen.Count < 1)
 			{
 				double q = rand.NextDouble();
 
@@ -162,7 +162,7 @@ namespace VKPwork
 			}
 
 			// Генерация случайного числа НАГРУЗКИ в цикле с условием
-			while (randValueLoad.Count < 105409)
+			while (randValueLoad.Count < 1)
 			{
 				double q = rand.NextDouble();
 				if (q >= 0 && q < v4)
@@ -262,7 +262,7 @@ namespace VKPwork
 			double numberYR = 0;
 
 			// Цикл расчета перетоков в RastrWin3
-			for (int i = 0; i < 105409; i++)
+			for (int i = 0; i < 1; i++)
 			{
 				// Присвоение нового числа мощности генерации
 				var setSelAgr = "Num=" + 2;
@@ -274,11 +274,17 @@ namespace VKPwork
 				var setSelNy = "ny=" + 5;
 				tableNode.SetSel(setSelNy);
 				var index2 = tableNode.FindNextSel[-1];
-				activeLoad.Z[index1] = randValueLoad[i];
+				//var PPP = activeLoad.Z[index2];
+				activeLoad.Z[index2] = randValueLoad[i];
 
 				// Расчет УР
 				_ = rastr.rgm("");
 				numberYR += 1;
+
+				// Сохранение результатов
+				string fileNew = @"C:\Users\Анастасия\Desktop\ПроизПрактика\Растр\Режим2.rg2";
+				string shablon = @"C:\Program Files (x86)\RastrWin3\RastrWin3\SHABLON\режим.rg2";
+				rastr.Save(fileNew, shablon);
 
 				// Считывание перетоков по каждой ветви
 				var setSelVetv1 = "ip=" + 3 + "&" + "iq=" + 2 + "&" + "np=" + 1;
@@ -337,7 +343,7 @@ namespace VKPwork
 			worksheet.Name = "Случайные величины";
 
 			// Запись значений в файл Excel
-			for (int i = 0; i < 105409; i++)
+			for (int i = 0; i < 1; i++)
 			{
 				// Получаем диапазон ячеек начиная с ячейки A1
 				Range range = worksheet.Range["A1"];
