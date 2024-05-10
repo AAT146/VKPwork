@@ -38,7 +38,7 @@ namespace VKPwork
 			for (int i = 0; i < X.Count; i++)
 			{
 				// Если true, то возврат 1; Если false (< либо =), то возврат 0.
-				double result = X[i] > X[i] ? 1 : 0;
+				double result = X[i] > Y[i] ? 1 : 0;
 				results.Add(result);
 			}
 
@@ -111,7 +111,6 @@ namespace VKPwork
 			double v6 = 0.16;
 			double sko6 = 5.5;
 			double mo6 = 123.5;
-			double minLoad = 10;
 			double maxLoad = 167;
 
 			// Генерация случайных величин (СВ)
@@ -132,7 +131,7 @@ namespace VKPwork
 				{
 					Normal normalDistribution = new Normal(mo3, sko3);
 					double part3 = Math.Round(normalDistribution.Sample(), 0);
-					if (part3 >= minGen && part3 < maxGen)
+					if (part3 >= minGen)
 					{
 						randValueGen.Add(part3);
 					}
@@ -142,17 +141,14 @@ namespace VKPwork
 				{
 					ContinuousUniform uniformDist = new ContinuousUniform(lowerBound, upperBound);
 					double part1 = Math.Round(uniformDist.Sample(), 0);
-					if (part1 >= minGen && part1 < maxGen)
-					{
-						randValueGen.Add(part1);
-					}
+					randValueGen.Add(part1);
 				}
 
 				else if (q >= (v3 + v1) && q < (v3 + v1 + v2))
 				{
 					Normal normalDistribution = new Normal(mo2, sko2);
 					double part2 = Math.Round(normalDistribution.Sample(), 0);
-					if (part2 >= minGen && part2 < maxGen)
+					if (part2 < maxGen)
 					{
 						randValueGen.Add(part2);
 					}
@@ -167,7 +163,7 @@ namespace VKPwork
 				{
 					Normal normalDistribution = new Normal(mo4, sko4);
 					double part4 = Math.Round(normalDistribution.Sample(), 0);
-					if (part4 >= minLoad && part4 < maxLoad)
+					if (part4 < maxLoad)
 					{
 						randValueLoad.Add(part4);
 					}
@@ -176,7 +172,7 @@ namespace VKPwork
 				{
 					Normal normalDistribution = new Normal(mo5, sko5);
 					double part5 = Math.Round(normalDistribution.Sample(), 0);
-					if (part5 >= minLoad && part5 < maxLoad)
+					if (part5 < maxLoad)
 					{
 						randValueLoad.Add(part5);
 					}
@@ -185,7 +181,7 @@ namespace VKPwork
 				{
 					Normal normalDistribution = new Normal(mo6, sko6);
 					double part6 = Math.Round(normalDistribution.Sample(), 0);
-					if (part6 >= minLoad && part6 < maxLoad)
+					if (part6 < maxLoad)
 					{
 						randValueLoad.Add(part6);
 					}
@@ -320,7 +316,7 @@ namespace VKPwork
 				range.Offset[i + 1, 3].Value = ksTaksimoMamakan[i];
 
 				// Запись случайной величины в столбец E - СМЗУ КС_МДП (Пеледуй - Сухой Лог)
-				range.Offset[0, 4].Value = "СМЗУ КС_МДП (П-СХ)";
+				range.Offset[0, 4].Value = "СМЗУ КС_МДП (П-СЛ)";
 				range.Offset[i + 1, 4].Value = smzyPSL[i];
 
 				// Запись случайной величины в столбец F - СМЗУ КС_МДП (Таксимо - Мамакан)
@@ -328,7 +324,7 @@ namespace VKPwork
 				range.Offset[i + 1, 5].Value = smzyTM[i];
 
 				// Запись случайной величины в столбец J - ПУР КС_МДП (Пеледуй - Сухой Лог)
-				range.Offset[0, 6].Value = "ПУР КС_МДП (П-СХ)";
+				range.Offset[0, 6].Value = "ПУР КС_МДП (П-СЛ)";
 				range.Offset[i + 1, 6].Value = pyrPSL[i];
 
 				// Запись случайной величины в столбец H - ПУР КС_МДП (Таксимо - Мамакан)
