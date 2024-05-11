@@ -113,6 +113,16 @@ namespace VKPwork
 			double mo6 = 123.5;
 			double maxLoad = 167;
 
+			// Константы вероятности состояния цепей ЛЭП
+			double q0psl1 = 0.1328;
+			double q1psl1 = 0.8672;
+			double q0psl2 = 0.0407;
+			double q1psl2 = 0.9593;
+			double q0tm1 = 0.0322;
+			double q1tm1 = 0.9678;
+			double q0tm2 = 0.0358;
+			double q1tm2 = 0.9642;
+
 			// Генерация случайных величин (СВ)
 			Random rand = new Random();
 
@@ -121,6 +131,18 @@ namespace VKPwork
 
 			// Лист для хранения СВ нагрузки
 			List<double> randValueLoad = new List<double>();
+
+			// Лист для хранения СС Пеледуй-Сухой Лог №1
+			List<double> randSostPeledSyxLog1 = new List<double>();
+
+			// Лист для хранения СС Пеледуй-Сухой Лог №2
+			List<double> randSostPeledSyxLog2 = new List<double>();
+
+			// Лист для хранения СС Таксимо-Мамакан №1
+			List<double> randSostTaksimoMamakan1 = new List<double>();
+
+			// Лист для хранения СС Таксимо-Мамакан №2
+			List<double> randSostTaksimoMamakan2 = new List<double>();
 
 			// Генерация случайного числа ГЕНЕРАЦИИ в цикле с условием
 			while (randValueGen.Count < 10)
@@ -188,6 +210,49 @@ namespace VKPwork
 				}
 			}
 
+			double s1 = 0;
+			double s2 = 1;
+			// Генерация случайного состояния ЦЕПИ линии
+			while (randValueLoad.Count < 10)
+			{
+				double q1 = rand.NextDouble();
+				double q2 = rand.NextDouble();
+				double q3 = rand.NextDouble();
+				double q4 = rand.NextDouble();
+				if (q1 >= 0 && q1 <= q0psl1)
+				{
+					randSostPeledSyxLog1.Add(s1);
+				}
+				else if (q1 > q0psl1 && q1 <= (q0psl1 + q1psl1))
+				{
+					randSostPeledSyxLog1.Add(s2);
+				}
+				if (q2 >= 0 && q2 <= q0psl2)
+				{
+					randSostPeledSyxLog2.Add(s1);
+				}
+				else if (q2 > q0psl2 && q2 <= (q0psl2 + q1psl2))
+				{
+					randSostPeledSyxLog2.Add(s2);
+				}
+				if (q3 >= 0 && q3 <= q0tm1)
+				{
+					randSostTaksimoMamakan1.Add(s1);
+				}
+				else if (q3 > q0tm1 && q3 <= (q0tm1 + q1tm1))
+				{
+					randSostTaksimoMamakan1.Add(s2);
+				}
+				if (q4 >= 0 && q4 <= q0tm2)
+				{
+					randSostTaksimoMamakan2.Add(s1);
+				}
+				else if (q4 > q0tm2 && q4 <= (q0tm2 + q1tm2))
+				{
+					randSostTaksimoMamakan2.Add(s2);
+				}
+			}
+
 			// Создание указателя на экземпляр RastrWin и его запуск
 			IRastr rastr = new Rastr();
 
@@ -217,6 +282,13 @@ namespace VKPwork
 			// Узлы
 			ICol numberNode = (ICol)tableNode.Cols.Item("ny");   // Номер
 			ICol activeLoad = (ICol)tableNode.Cols.Item("pn");   // Акт. мощность нагрузки
+
+			// Ветви
+			ICol staVetv = (ICol)tableVetv.Cols.Item("sta");   // Состояние
+			ICol nStart = (ICol)tableVetv.Cols.Item("ip");   // Номер начала
+			ICol nEnd = (ICol)tableVetv.Cols.Item("iq");   // Номер конца
+			ICol nParall = (ICol)tableVetv.Cols.Item("np");   // Номер параллельности
+			ICol nameVetv = (ICol)tableVetv.Cols.Item("name");   // Название
 
 			// Генераторы(УР)
 			ICol nAgr = (ICol)tableGenYR.Cols.Item("Num"); // Номер агрегата
@@ -353,6 +425,13 @@ namespace VKPwork
 				$"Количество просчитанных режимов: {numberYR}\n");
 
 			Console.ReadKey();
+
+			//var setSelVetv = "ip=" + 2 + "&" + "iq=" + 3 + "&" + "np=" + 2;
+			//tableVetv.SetSel(setSelVetv);
+			//var number = tableVetv.FindNextSel[-1];
+			//staVetv.Z[number] = 1;    // 1 - отключение; 0 -включение
+			//var name1v = nameVetv.Z[number];
+			//Console.WriteLine($"Название ветви: {name1v}");
 		}
 	}
 }
