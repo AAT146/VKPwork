@@ -205,6 +205,9 @@ namespace VKPwork
 			// Объявление объекта, содержащего таблицу "Узлы"
 			ITable tableNode = (ITable)rastr.Tables.Item("node");
 
+			// Объявление объекта, содержащего таблицу "Ветви"
+			ITable tableVetv = (ITable)rastr.Tables.Item("vetv");
+
 			// Объявление объекта, содержащего таблицу "Генератор(УР)"
 			ITable tableGenYR = (ITable)rastr.Tables.Item("Generator");
 
