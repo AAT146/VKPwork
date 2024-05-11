@@ -210,6 +210,7 @@ namespace VKPwork
 				}
 			}
 
+			// 1 - отключение; 0 -включение
 			double s1 = 0;
 			double s2 = 1;
 			// Генерация случайного состояния ЦЕПИ линии
@@ -223,7 +224,7 @@ namespace VKPwork
 				{
 					randSostPeledSyxLog1.Add(s1);
 				}
-				else if (q1 > q0psl1 && q1 <= (q0psl1 + q1psl1))
+				if (q1 > q0psl1 && q1 <= (q0psl1 + q1psl1))
 				{
 					randSostPeledSyxLog1.Add(s2);
 				}
@@ -231,7 +232,7 @@ namespace VKPwork
 				{
 					randSostPeledSyxLog2.Add(s1);
 				}
-				else if (q2 > q0psl2 && q2 <= (q0psl2 + q1psl2))
+				if (q2 > q0psl2 && q2 <= (q0psl2 + q1psl2))
 				{
 					randSostPeledSyxLog2.Add(s2);
 				}
@@ -239,7 +240,7 @@ namespace VKPwork
 				{
 					randSostTaksimoMamakan1.Add(s1);
 				}
-				else if (q3 > q0tm1 && q3 <= (q0tm1 + q1tm1))
+				if (q3 > q0tm1 && q3 <= (q0tm1 + q1tm1))
 				{
 					randSostTaksimoMamakan1.Add(s2);
 				}
@@ -247,7 +248,7 @@ namespace VKPwork
 				{
 					randSostTaksimoMamakan2.Add(s1);
 				}
-				else if (q4 > q0tm2 && q4 <= (q0tm2 + q1tm2))
+				if (q4 > q0tm2 && q4 <= (q0tm2 + q1tm2))
 				{
 					randSostTaksimoMamakan2.Add(s2);
 				}
@@ -291,12 +292,12 @@ namespace VKPwork
 			ICol nameVetv = (ICol)tableVetv.Cols.Item("name");   // Название
 
 			// Генераторы(УР)
-			ICol nAgr = (ICol)tableGenYR.Cols.Item("Num"); // Номер агрегата
-			ICol pGenYR = (ICol)tableGenYR.Cols.Item("P"); // Акт. мощность генерации
+			ICol nAgr = (ICol)tableGenYR.Cols.Item("Num");   // Номер агрегата
+			ICol pGenYR = (ICol)tableGenYR.Cols.Item("P");   // Акт. мощность генерации
 
 			// Сечения
-			ICol nSech = (ICol)tableSechen.Cols.Item("ns"); // Номер сечения
-			ICol valueSech = (ICol)tableSechen.Cols.Item("psech"); // Полученное значение
+			ICol nSech = (ICol)tableSechen.Cols.Item("ns");   // Номер сечения
+			ICol valueSech = (ICol)tableSechen.Cols.Item("psech");   // Полученное значение
 
 			// Лист для хранения перетока по КС
 			List<double> ksPeledSyxLog = new List<double>();
@@ -317,8 +318,28 @@ namespace VKPwork
 				var setSelNy = "ny=" + 5;
 				tableNode.SetSel(setSelNy);
 				var index2 = tableNode.FindNextSel[-1];
-				//var PPP = activeLoad.Z[index2];
 				activeLoad.Z[index2] = randValueLoad[i];
+
+				// Присваивание сгенерированного состояния цепям линий
+				var setSelVetv1 = "ip=" + 3 + "&" + "iq=" + 2 + "&" + "np=" + 1;   // П-СХ № 1
+				tableVetv.SetSel(setSelVetv1);
+				var number1 = tableVetv.FindNextSel[-1];
+				staVetv.Z[number1] = randSostPeledSyxLog1[i];
+
+				var setSelVetv2 = "ip=" + 3 + "&" + "iq=" + 2 + "&" + "np=" + 2;   // П-СХ № 2
+				tableVetv.SetSel(setSelVetv2);
+				var number2 = tableVetv.FindNextSel[-1];
+				staVetv.Z[number2] = randSostPeledSyxLog2[i];
+
+				var setSelVetv3 = "ip=" + 4 + "&" + "iq=" + 2 + "&" + "np=" + 1;   // Т-М № 1
+				tableVetv.SetSel(setSelVetv3);
+				var number3 = tableVetv.FindNextSel[-1];
+				staVetv.Z[number3] = randSostTaksimoMamakan1[i];
+
+				var setSelVetv4 = "ip=" + 4 + "&" + "iq=" + 2 + "&" + "np=" + 2;   // Т-М № 2
+				tableVetv.SetSel(setSelVetv4);
+				var number4 = tableVetv.FindNextSel[-1];
+				staVetv.Z[number4] = randSostTaksimoMamakan2[i];
 
 				// Расчет УР
 				_ = rastr.rgm("");
@@ -365,50 +386,72 @@ namespace VKPwork
 			// Создание книги и листа
 			Application excelApp = new Application();
 			Workbook workbook = excelApp.Workbooks.Add();
-			Worksheet worksheet = workbook.Sheets.Add();
-			worksheet.Name = "Результат";
+			Worksheet worksheet1 = workbook.Sheets.Add();
+			worksheet1.Name = "Случайные величины";
+			Worksheet worksheet2 = workbook.Sheets.Add();
+			worksheet2.Name = "Логическая операция";
+			Worksheet worksheet3 = workbook.Sheets.Add();
+			worksheet3.Name = "Состояние линий";
 
 			// Запись значений в файл Excel
 			for (int i = 0; i < 10; i++)
 			{
 				// Получаем диапазон ячеек начиная с ячейки A1
-				Range range = worksheet.Range["A1"];
+				Range range1 = worksheet1.Range["A1"];
+				Range range2 = worksheet2.Range["A1"];
+				Range range3 = worksheet2.Range["A1"];
 
-				// Запись случайной величины в столбец А - генерация
-				range.Offset[0, 0].Value = "Генерация";
-				range.Offset[i + 1, 0].Value = randValueGen[i];
+				// Запись случайной величины в столбец А листа 1 - генерация
+				range1.Offset[0, 0].Value = "Генерация";
+				range1.Offset[i + 1, 0].Value = randValueGen[i];
 
-				// Запись случайной величины в столбец B - нагрузка
-				range.Offset[0, 1].Value = "Нагрузка";
-				range.Offset[i + 1, 1].Value = randValueLoad[i];
+				// Запись случайной величины в столбец B листа 1 - нагрузка
+				range1.Offset[0, 1].Value = "Нагрузка";
+				range1.Offset[i + 1, 1].Value = randValueLoad[i];
 
-				// Запись случайной величины в столбец C - КС Пеледуй - Сухой Лог
-				range.Offset[0, 2].Value = "КС Пеледуй - Сухой Лог";
-				range.Offset[i + 1, 2].Value = ksPeledSyxLog[i];
+				// Запись случайной величины в столбец C листа 1 - КС Пеледуй - Сухой Лог
+				range1.Offset[0, 2].Value = "КС Пеледуй - Сухой Лог";
+				range1.Offset[i + 1, 2].Value = ksPeledSyxLog[i];
 
-				// Запись случайной величины в столбец D - КС Таксимо - Мамакан
-				range.Offset[0, 3].Value = "КС Таксимо - Мамакан";
-				range.Offset[i + 1, 3].Value = ksTaksimoMamakan[i];
+				// Запись случайной величины в столбец D листа 1 - КС Таксимо - Мамакан
+				range1.Offset[0, 3].Value = "КС Таксимо - Мамакан";
+				range1.Offset[i + 1, 3].Value = ksTaksimoMamakan[i];
 
-				// Запись случайной величины в столбец E - СМЗУ КС_МДП (Пеледуй - Сухой Лог)
-				range.Offset[0, 4].Value = "СМЗУ КС_МДП (П-СЛ)";
-				range.Offset[i + 1, 4].Value = smzyPSL[i];
+				// Запись логической операции в столбец A листа 2 - СМЗУ КС_МДП (Пеледуй - Сухой Лог)
+				range2.Offset[0, 0].Value = "СМЗУ КС_МДП (П-СЛ)";
+				range2.Offset[i + 1, 0].Value = smzyPSL[i];
 
-				// Запись случайной величины в столбец F - СМЗУ КС_МДП (Таксимо - Мамакан)
-				range.Offset[0, 5].Value = "СМЗУ КС_МДП (Т-М)";
-				range.Offset[i + 1, 5].Value = smzyTM[i];
+				// Запись логической операции в столбец B листа 2 - СМЗУ КС_МДП (Таксимо - Мамакан)
+				range2.Offset[0, 1].Value = "СМЗУ КС_МДП (Т-М)";
+				range2.Offset[i + 1, 1].Value = smzyTM[i];
 
-				// Запись случайной величины в столбец J - ПУР КС_МДП (Пеледуй - Сухой Лог)
-				range.Offset[0, 6].Value = "ПУР КС_МДП (П-СЛ)";
-				range.Offset[i + 1, 6].Value = pyrPSL[i];
+				// Запись логической операции в столбец C листа 2 - ПУР КС_МДП (Пеледуй - Сухой Лог)
+				range2.Offset[0, 2].Value = "ПУР КС_МДП (П-СЛ)";
+				range2.Offset[i + 1, 2].Value = pyrPSL[i];
 
-				// Запись случайной величины в столбец H - ПУР КС_МДП (Таксимо - Мамакан)
-				range.Offset[0, 7].Value = "ПУР КС_МДП (Т-М)";
-				range.Offset[i + 1, 7].Value = pyrTM[i];
+				// Запись логической операции в столбец D листа 2 - ПУР КС_МДП (Таксимо - Мамакан)
+				range2.Offset[0, 3].Value = "ПУР КС_МДП (Т-М)";
+				range2.Offset[i + 1, 3].Value = pyrTM[i];
 
-				// Запись случайной величины в столбец I - ПУР1 КС_МДП (Таксимо - Мамакан)
-				range.Offset[0, 8].Value = "ПУР1 КС_МДП (Т-М)";
-				range.Offset[i + 1, 8].Value = pyrTM1[i];
+				// Запись логической операции в столбец E листа 2 - ПУР1 КС_МДП (Таксимо - Мамакан)
+				range2.Offset[0, 4].Value = "ПУР1 КС_МДП (Т-М)";
+				range2.Offset[i + 1, 4].Value = pyrTM1[i];
+
+				// Запись состояния линии в столбец А листа 3 - №1 П-СХ
+				range3.Offset[0, 0].Value = "№1 П-СХ";
+				range3.Offset[i + 1, 0].Value = randSostPeledSyxLog1[i];
+
+				// Запись состояния линии в столбец B листа 3 - №2 П-СХ
+				range3.Offset[0, 1].Value = "№2 П-СХ";
+				range3.Offset[i + 1, 1].Value = randSostPeledSyxLog2[i];
+
+				// Запись состояния линии в столбец C листа 3 - №1 Т-М
+				range3.Offset[0, 2].Value = "№1 Т-М";
+				range3.Offset[i + 1, 2].Value = randSostTaksimoMamakan1[i];
+
+				// Запись состояния линии в столбец D листа 3 - №2 Т-М
+				range3.Offset[0, 3].Value = "№2 Т-М";
+				range3.Offset[i + 1, 3].Value = randSostTaksimoMamakan2[i];
 			}
 
 			workbook.SaveAs(xlsxFile);
@@ -426,12 +469,6 @@ namespace VKPwork
 
 			Console.ReadKey();
 
-			//var setSelVetv = "ip=" + 2 + "&" + "iq=" + 3 + "&" + "np=" + 2;
-			//tableVetv.SetSel(setSelVetv);
-			//var number = tableVetv.FindNextSel[-1];
-			//staVetv.Z[number] = 1;    // 1 - отключение; 0 -включение
-			//var name1v = nameVetv.Z[number];
-			//Console.WriteLine($"Название ветви: {name1v}");
 		}
 	}
 }
