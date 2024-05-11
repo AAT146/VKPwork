@@ -211,10 +211,11 @@ namespace VKPwork
 			}
 
 			// 1 - отключение; 0 -включение
-			double s1 = 0;
-			double s2 = 1;
+			double s1 = 1;
+			double s2 = 0;
 			// Генерация случайного состояния ЦЕПИ линии
-			while (randValueLoad.Count < 10)
+			while (randSostPeledSyxLog1.Count < 10 && randSostPeledSyxLog2.Count < 10 
+				&& randSostTaksimoMamakan1.Count < 10 && randSostTaksimoMamakan2.Count < 10)
 			{
 				double q1 = rand.NextDouble();
 				double q2 = rand.NextDouble();
@@ -399,7 +400,7 @@ namespace VKPwork
 				// Получаем диапазон ячеек начиная с ячейки A1
 				Range range1 = worksheet1.Range["A1"];
 				Range range2 = worksheet2.Range["A1"];
-				Range range3 = worksheet2.Range["A1"];
+				Range range3 = worksheet3.Range["A1"];
 
 				// Запись случайной величины в столбец А листа 1 - генерация
 				range1.Offset[0, 0].Value = "Генерация";
