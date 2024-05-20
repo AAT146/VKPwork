@@ -29,6 +29,7 @@ namespace VKPwork
 			}
 
 			// Открытие и чтение файла Excel
+			ExcelPackage.LicenseContext = LicenseContext.NonCommercial;
 			FileInfo fileInfo = new FileInfo(filePath);
 			FileInfo outputFileInfo = new FileInfo(outputPath);
 
