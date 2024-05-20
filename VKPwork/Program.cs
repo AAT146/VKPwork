@@ -10,7 +10,6 @@ using System.Linq;
 using System.Reflection;
 using System.IO.Ports;
 
-
 namespace VKPwork
 {
 	class Program
@@ -52,12 +51,16 @@ namespace VKPwork
 						try
 						{
 							// Конвертация из двоичной в десятичную систему
-							int decimalValue = Convert.ToInt32(binaryString, 2);
+							long decimalValue = Convert.ToInt64(binaryString, 2);
 							worksheet.Cells[row, 2].Value = decimalValue;
 						}
 						catch (FormatException)
 						{
 							worksheet.Cells[row, 2].Value = "Invalid Format";
+						}
+						catch (OverflowException)
+						{
+							worksheet.Cells[row, 2].Value = "Overflow";
 						}
 					}
 					else
@@ -71,6 +74,7 @@ namespace VKPwork
 			}
 
 			Console.WriteLine($"Результаты сохранены в {outputPath}");
+			Console.ReadKey();
 		}
 	}
 }
