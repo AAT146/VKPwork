@@ -38,11 +38,10 @@ namespace VKPwork
 				ExcelWorksheet worksheet = package.Workbook.Worksheets[0];
 				int rowCount = worksheet.Dimension.Rows;
 
-				// Добавление заголовка для нового столбца
-				//worksheet.Cells[1, 2].Value = "Decimal Value";
+				// Данные в файле без заголовка, начинаются с А1
 
 				// Перебор строк в столбце A
-				for (int row = 1; row <= rowCount; row++) // Начинаем с 2, чтобы пропустить заголовок
+				for (int row = 1; row <= rowCount; row++) // Начинаем с 1
 				{
 					string binaryString = worksheet.Cells[row, 1].Text;
 
