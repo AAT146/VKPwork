@@ -14,67 +14,10 @@ using System.IO.Ports;
 namespace VKPwork
 {
 	/// <summary>
-	/// Класс, содержащий метод сравнения двух величин.
-	/// </summary>
-	public class ComparisonHelper
-	{
-		/// <summary>
-		/// Метод: сравнение значений P.КС с МДП.
-		/// </summary>
-		/// <param name="X">Лист со значениями перетока по КС.</param>
-		/// <param name="Y">Лист со значениями МДП.</param>
-		/// <returns>Новый список, содержащий в себе delta или 0.</returns>
-		/// <exception cref="ArgumentException">Исключение при неравной длине
-		/// исходных списков.</exception>
-		public static List<double> CompareLists(List<double> X, List<double> Y)
-		{
-			if (X.Count != Y.Count)
-			{
-				throw new ArgumentException("Списки X и Y должны иметь одинаковую длину.");
-			}
-
-			List<double> results = new List<double>();
-
-			for (int i = 0; i < X.Count; i++)
-			{
-				// Если true, то возврат 1; Если false (< либо =), то возврат 0.
-				double result = X[i] > X[i] ? 1 : 0;
-				results.Add(result);
-			}
-
-			return results;
-		}
-	}
-
-	/// <summary>
 	/// Расчета ПБН на примере Бодайбинского ЭР Иркутской ОЗ.
 	/// </summary>
 	public class Program
 	{
-		/// <summary>
-		/// Метод: чтение файла формата Excel.
-		/// </summary>
-		/// <param name="filePath">Файл Excel.</param>
-		/// <returns>Массив данных.</returns>
-		public static List<double> ReadFileFromExcel(string filePath)
-		{
-			// Установка контекста лицензирования
-			ExcelPackage.LicenseContext = LicenseContext.NonCommercial;
-
-			using (var package = new ExcelPackage(new FileInfo(filePath)))
-			{
-				var worksheet = package.Workbook.Worksheets[0];
-				List<double> data = new List<double>(worksheet.Dimension.Rows);
-
-				for (int i = 1; i <= worksheet.Dimension.Rows; i++)
-				{
-					data.Add(worksheet.Cells[i, 1].GetValue<double>());
-				}
-
-				return data;
-			}
-		}
-
 		/// <summary>
 		/// Упрощенное моделирование.
 		/// </summary>
@@ -88,29 +31,52 @@ namespace VKPwork
 
 			Console.WriteLine($"Работа алгоритма.\n");
 
-			// Константы для искусственного з.распр. генерации ГЭС
-			double v3 = 0.42;
-			double sko3 = 3.7;
-			double mo3 = 14.5;
-			double v2 = 0.3;
-			double sko2 = 1.3;
-			double mo2 = 86.95;
-			double v1 = 0.16;
-			double lowerBound = 23;
-			double upperBound = 83.05;
+			// Константы для з.распр. генерации ГЭС - ЛЕТО
+			double gs1 = 0.993;
+			double skoGS1 = 1.52;
+			double moGS1 = 88;
+			double gs2 = 0.007;
+			double lowerS = 34;
+			double upperS = 84;
+
+			// Константы з.распр. генерации ГЭС - ЗИМА
+			double gw1 = 0.148;
+			double skoGW1 = 3.4;
+			double moGW1 = 19;
+			double gw2 = 0.002;
+			double gw3 = 0.84;
+			double skoGW3 = 3.4;
+			double moGW3 = 14;
+			double lowerW = 23;
+			double upperW = 83.05;
+
+			// Min&Max знаечния генерации
 			double minGen = 8;
 			double maxGen = 87;
 
-			// Константы для искусственного з.распр. нагрузки
-			double v4 = 0.43;
-			double sko4 = 5.8;
-			double mo4 = 110.55;
-			double v5 = 0.41;
-			double sko5 = 11.2;
-			double mo5 = 107.8;
-			double v6 = 0.16;
-			double sko6 = 5.5;
-			double mo6 = 123.5;
+			// Константы з.распр. нагрузки - ЛЕТО
+			double ls1 = 0.27;
+			double skoLS1 = 10;
+			double moLS1 = 101;
+			double ls2 = 0.50;
+			double skoLS2 = 6;
+			double moLS2 = 110;
+			double ls3 = 0.23;
+			double skoLS3 = 5.5;
+			double moLS3 = 125;
+
+			// Константы з.распр. нагрузки - ЗИМА
+			double lw1 = 0.41;
+			double skoLW1 = 8;
+			double moLW1 = 110.5;
+			double lw2 = 0.42;
+			double skoLW2 = 9;
+			double moLW2 = 117.8;
+			double lw3 = 0.17;
+			double skoLW3 = 5;
+			double moLW3 = 113;
+
+			// Min&Max знаечния нагрузки
 			double minLoad = 10;
 			double maxLoad = 167;
 
@@ -118,43 +84,35 @@ namespace VKPwork
 			Random rand = new Random();
 
 			// Лист для хранения СВ генерации
-			List<double> randValueGen = new List<double>();
+			List<double> randValueGenSummer = new List<double>();
+			List<double> randValueGenWinter = new List<double>();
 
 			// Лист для хранения СВ нагрузки
-			List<double> randValueLoad = new List<double>();
+			List<double> randValueLoadSummer = new List<double>();
+			List<double> randValueLoadLoad = new List<double>();
 
-			// Генерация случайного числа ГЕНЕРАЦИИ в цикле с условием
-			while (randValueGen.Count < 105409)
+			// СВ генерация ЛЕТО
+			while (randValueGenSummer.Count < 45733)
 			{
 				double q = rand.NextDouble();
 
-				if (q >= 0 && q < v3)
+				if (q > 0 && q <= gs1)
 				{
-					Normal normalDistribution = new Normal(mo3, sko3);
-					double part3 = Math.Round(normalDistribution.Sample(), 0);
-					if (part3 >= minGen && part3 < maxGen)
-					{
-						randValueGen.Add(part3);
-					}
-				}
-
-				else if (q >= v3 && q < (v3 + v1))
-				{
-					ContinuousUniform uniformDist = new ContinuousUniform(lowerBound, upperBound);
-					double part1 = Math.Round(uniformDist.Sample(), 0);
+					Normal normalDistribution = new Normal(moGS1, skoGS1);
+					double part1 = Math.Round(normalDistribution.Sample(), 0);
 					if (part1 >= minGen && part1 < maxGen)
 					{
-						randValueGen.Add(part1);
+						randValueGenSummer.Add(part1);
 					}
 				}
 
-				else if (q >= (v3 + v1) && q < (v3 + v1 + v2))
+				else if (q > gs1 && q <= (gs1 + gs2))
 				{
-					Normal normalDistribution = new Normal(mo2, sko2);
-					double part2 = Math.Round(normalDistribution.Sample(), 0);
+					ContinuousUniform uniformDist = new ContinuousUniform(lowerS, upperS);
+					double part2 = Math.Round(uniformDist.Sample(), 0);
 					if (part2 >= minGen && part2 < maxGen)
 					{
-						randValueGen.Add(part2);
+						randValueGenSummer.Add(part2);
 					}
 				}
 			}
@@ -192,151 +150,11 @@ namespace VKPwork
 				}
 			}
 
-			// Создание указателя на экземпляр RastrWin и его запуск
-			IRastr rastr = new Rastr();
-
-			// Загрузка файла
-			string fileRegim = @"C:\Users\Анастасия\Desktop\ПроизПрактика\Растр\Режим.rg2";
-			string shablonRegim = @"C:\Program Files (x86)\RastrWin3\RastrWin3\SHABLON\режим.rg2";
-
-			rastr.Load(RG_KOD.RG_REPL, fileRegim, shablonRegim);
-
-			string fileSechen = @"C:\Users\Анастасия\Desktop\ПроизПрактика\Растр\Сечения.sch";
-			string shablonSechen = @"C:\Program Files (x86)\RastrWin3\RastrWin3\SHABLON\сечения.sch";
-
-			rastr.Load(RG_KOD.RG_REPL, fileSechen, shablonSechen);
-
-			// Объявление объекта, содержащего таблицу "Узлы"
-			ITable tableNode = (ITable)rastr.Tables.Item("node");
-
-			// Объявление объекта, содержащего таблицу "Генератор(УР)"
-			ITable tableGenYR = (ITable)rastr.Tables.Item("Generator");
-
-			// Объявление объекта, содержащего таблицу "Ветви"
-			ITable tableVetv = (ITable)rastr.Tables.Item("vetv");
-
-			// Объявление объекта, содержащего таблицу "Сечения"
-			ITable tableSechen = (ITable)rastr.Tables.Item("sechen");
-
-			// Узлы
-			ICol numberNode = (ICol)tableNode.Cols.Item("ny");   // Номер
-			ICol nameNode = (ICol)tableNode.Cols.Item("name");   // Название
-			ICol activeGen = (ICol)tableNode.Cols.Item("pg");   // Акт. мощность генерации
-			ICol activeLoad = (ICol)tableNode.Cols.Item("pn");   // Акт. мощность нагрузки
-
-			// Генераторы(УР)
-			ICol nAgr = (ICol)tableGenYR.Cols.Item("Num"); // Номер агрегата
-			ICol nameGenYR = (ICol)tableGenYR.Cols.Item("Name"); // Название
-			ICol pGenYR = (ICol)tableGenYR.Cols.Item("P"); // Акт. мощность генерации
-
-			// Ветви
-			ICol staVetv = (ICol)tableVetv.Cols.Item("sta");   // Состояние
-			ICol tipVetv = (ICol)tableVetv.Cols.Item("tip");   // Тип
-			ICol nStart = (ICol)tableVetv.Cols.Item("ip");   // Номер начала
-			ICol nEnd = (ICol)tableVetv.Cols.Item("iq");   // Номер конца
-			ICol nParall = (ICol)tableVetv.Cols.Item("np");   // Номер параллельности
-			ICol nameVetv = (ICol)tableVetv.Cols.Item("name");   // Название
-			ICol pVetvEnd = (ICol)tableVetv.Cols.Item("pl_iq");   // Поток P в конце ветви
-
-			// Сечения
-			ICol nSech = (ICol)tableSechen.Cols.Item("ns"); // Номер сечения
-			ICol nameSech = (ICol)tableSechen.Cols.Item("name"); // Имя сечения
-			ICol minSech = (ICol)tableSechen.Cols.Item("pmin"); // Минимальное значение
-			ICol maxSech = (ICol)tableSechen.Cols.Item("pmax"); // Максимальное значение
-			ICol valueSech = (ICol)tableSechen.Cols.Item("psech"); // Полученное значение
-
-			// Лист для хранения перетока по Пеледуй - Сухой Лог I и II цепь
-			List<double> v1PeledSyxLog = new List<double>();
-			List<double> v2PeledSyxLog = new List<double>();
-
-			// Лист для хранения перетока по Таксимо - Мамакан I и II цепь
-			List<double> v1TaksimoMamakan = new List<double>();
-			List<double> v2TaksimoMamakan = new List<double>();
-
-			// Лист для хранения перетока по КС
-			List<double> ksPeledSyxLog = new List<double>();
-			List<double> ksTaksimoMamakan = new List<double>();
-
-			double numberYR = 0;
-
-			// Цикл расчета перетоков в RastrWin3
-			for (int i = 0; i < 105409; i++)
-			{
-				// Присвоение нового числа мощности генерации
-				var setSelAgr = "Num=" + 2;
-				tableGenYR.SetSel(setSelAgr);
-				var index1 = tableGenYR.FindNextSel[-1];
-				pGenYR.Z[index1] = randValueGen[i];
-
-				// Присвоение нового числа мощности нагрузки
-				var setSelNy = "ny=" + 5;
-				tableNode.SetSel(setSelNy);
-				var index2 = tableNode.FindNextSel[-1];
-				//var PPP = activeLoad.Z[index2];
-				activeLoad.Z[index2] = randValueLoad[i];
-
-				// Расчет УР
-				_ = rastr.rgm("");
-				numberYR += 1;
-
-				// Считывание перетоков по каждой ветви
-				var setSelVetv1 = "ip=" + 3 + "&" + "iq=" + 2 + "&" + "np=" + 1;
-				tableVetv.SetSel(setSelVetv1);
-				var index3 = tableVetv.FindNextSel[-1];
-				v1PeledSyxLog.Add(Math.Round(pVetvEnd.Z[index3], 0));
-
-				var setSelVetv2 = "ip=" + 3 + "&" + "iq=" + 2 + "&" + "np=" + 2;
-				tableVetv.SetSel(setSelVetv2);
-				var index4 = tableVetv.FindNextSel[-1];
-				v2PeledSyxLog.Add(Math.Round(pVetvEnd.Z[index4], 0));
-
-				var setSelVetv3 = "ip=" + 4 + "&" + "iq=" + 2 + "&" + "np=" + 1;
-				tableVetv.SetSel(setSelVetv3);
-				var index5 = tableVetv.FindNextSel[-1];
-				v1TaksimoMamakan.Add(Math.Round(pVetvEnd.Z[index5], 0));
-
-				var setSelVetv4 = "ip=" + 4 + "&" + "iq=" + 2 + "&" + "np=" + 2;
-				tableVetv.SetSel(setSelVetv4);
-				var index6 = tableVetv.FindNextSel[-1];
-				v2TaksimoMamakan.Add(Math.Round(pVetvEnd.Z[index6], 0));
-
-				// Считывание перетоков по каждому КС
-				var setSelNs1 = "ns=" + 1;
-				tableSechen.SetSel(setSelNs1);
-				var index7 = tableSechen.FindNextSel[-1];
-				ksPeledSyxLog.Add(Math.Round(valueSech.Z[index7], 0));
-
-				var setSelNs2 = "ns=" + 2;
-				tableSechen.SetSel(setSelNs2);
-				var index8 = tableSechen.FindNextSel[-1];
-				ksTaksimoMamakan.Add(Math.Round(valueSech.Z[index8], 0));
-			}
-
-			// Файл Excel значений МДП по КС
-			string xlsxMdpPeledSyxLog = @"C:\Users\Анастасия\Desktop\ПроизПрактика\Растр\KsPeledSyxLog.xlsx";
-			string xlsxMdpTaksimoMamakan = @"C:\Users\Анастасия\Desktop\ПроизПрактика\Растр\KsTaksimoMamakan.xlsx";
-			string xlsxPYRPeledSyxLog = @"C:\Users\Анастасия\Desktop\ПроизПрактика\Растр\PYRPeledSyxLog.xlsx";
-			string xlsxPYRTaksimoMamakan = @"C:\Users\Анастасия\Desktop\ПроизПрактика\Растр\PYRTaksimoMamakan.xlsx";
-			string xlsxPYRTaksimoMamakan1 = @"C:\Users\Анастасия\Desktop\ПроизПрактика\Растр\PYRTaksimoMamakan1.xlsx";
-
-			// Чтение данных из файла Excel
-			List<double> mdpPeledSyxLog = ReadFileFromExcel(xlsxMdpPeledSyxLog);
-			List<double> mdpTaksimoMamakan = ReadFileFromExcel(xlsxMdpTaksimoMamakan);
-			List<double> pyrPeledSyxLog = ReadFileFromExcel(xlsxPYRPeledSyxLog);
-			List<double> pyrTaksimoMamakan = ReadFileFromExcel(xlsxPYRTaksimoMamakan);
-			List<double> pyrTaksimoMamakan1 = ReadFileFromExcel(xlsxPYRTaksimoMamakan1);
-
-			// Определение разницы между КС и МДП
-			List<double> smzyPSL = ComparisonHelper.CompareLists(ksPeledSyxLog, mdpPeledSyxLog);
-			List<double> smzyTM = ComparisonHelper.CompareLists(ksTaksimoMamakan, mdpTaksimoMamakan);
-			List<double> pyrPSL = ComparisonHelper.CompareLists(ksPeledSyxLog, pyrPeledSyxLog);
-			List<double> pyrTM = ComparisonHelper.CompareLists(ksTaksimoMamakan, pyrTaksimoMamakan);
-			List<double> pyrTM1 = ComparisonHelper.CompareLists(ksTaksimoMamakan, pyrTaksimoMamakan1);
-
 			// Путь до файла Excel Результат
-			string folder = @"C:\Users\Анастасия\Desktop\ПроизПрактика";
-			string fileExcel = "Результат.xlsx";
-			string xlsxFile = Path.Combine(folder, fileExcel);
+			string folder = @"C:\Users\Анастасия\Desktop\NewWork\filesExcel";
+			string file1 = "Summer.xlsx";
+			string file2 = "Winter.xlsx";
+			string xlsxFile1 = Path.Combine(folder, file1);
 
 			// Создание книги и листа
 			Application excelApp = new Application();
