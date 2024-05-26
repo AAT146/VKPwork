@@ -44,11 +44,11 @@ namespace VKPwork
 			double skoGW1 = 3.4;
 			double moGW1 = 19;
 			double gw2 = 0.002;
-			double gw3 = 0.84;
+			double gw3 = 0.85;
 			double skoGW3 = 3.4;
 			double moGW3 = 14;
-			double lowerW = 23;
-			double upperW = 83.05;
+			double lowerW = 25;
+			double upperW = 66;
 
 			// Min&Max знаечния генерации
 			double minGen = 8;
@@ -89,7 +89,7 @@ namespace VKPwork
 
 			// Лист для хранения СВ нагрузки
 			List<double> randValueLoadSummer = new List<double>();
-			List<double> randValueLoadLoad = new List<double>();
+			List<double> randValueLoadWinter = new List<double>();
 
 			// СВ генерация ЛЕТО
 			while (randValueGenSummer.Count < 45733)
@@ -105,7 +105,6 @@ namespace VKPwork
 						randValueGenSummer.Add(part1);
 					}
 				}
-
 				else if (q > gs1 && q <= (gs1 + gs2))
 				{
 					ContinuousUniform uniformDist = new ContinuousUniform(lowerS, upperS);
@@ -117,122 +116,174 @@ namespace VKPwork
 				}
 			}
 
-			// Генерация случайного числа НАГРУЗКИ в цикле с условием
-			while (randValueLoad.Count < 105409)
+			// СВ генерация ЗИМА
+			while (randValueGenWinter.Count < 59676)
 			{
 				double q = rand.NextDouble();
-				if (q >= 0 && q < v4)
+
+				if (q > 0 && q <= gw1)
 				{
-					Normal normalDistribution = new Normal(mo4, sko4);
-					double part4 = Math.Round(normalDistribution.Sample(), 0);
-					if (part4 >= minLoad && part4 < maxLoad)
+					Normal normalDistribution = new Normal(moGW1, skoGW1);
+					double part3 = Math.Round(normalDistribution.Sample(), 0);
+					if (part3 >= minGen && part3 < maxGen)
 					{
-						randValueLoad.Add(part4);
+						randValueGenWinter.Add(part3);
 					}
 				}
-				else if (q >= v4 && q < (v4 + v5))
+				else if (q > gw1 && q <= (gw1 + gw2))
 				{
-					Normal normalDistribution = new Normal(mo5, sko5);
+					ContinuousUniform uniformDist = new ContinuousUniform(lowerW, upperW);
+					double part4 = Math.Round(uniformDist.Sample(), 0);
+					if (part4 >= minGen && part4 < maxGen)
+					{
+						randValueGenWinter.Add(part4);
+					}
+				}
+				else if (q > (gw1 + gw2) && q <= (gw1 + gw2 + gw3))
+				{
+					Normal normalDistribution = new Normal(moGW3, skoGW3);
 					double part5 = Math.Round(normalDistribution.Sample(), 0);
-					if (part5 >= minLoad && part5 < maxLoad)
+					if (part5 >= minGen && part5 < maxGen)
 					{
-						randValueLoad.Add(part5);
+						randValueGenWinter.Add(part5);
 					}
 				}
-				else if (q >= v5 && q < (v4 + v5 + v6))
+			}
+
+			// СВ нагрузка ЛЕТО
+			while (randValueLoadSummer.Count < 45733)
+			{
+				double q = rand.NextDouble();
+				if (q > 0 && q <= ls1)
 				{
-					Normal normalDistribution = new Normal(mo6, sko6);
+					Normal normalDistribution = new Normal(moLS1, skoLS1);
 					double part6 = Math.Round(normalDistribution.Sample(), 0);
 					if (part6 >= minLoad && part6 < maxLoad)
 					{
-						randValueLoad.Add(part6);
+						randValueLoadSummer.Add(part6);
+					}
+				}
+				else if (q > ls1 && q <= (ls1 + ls2))
+				{
+					Normal normalDistribution = new Normal(moLS2, skoLS2);
+					double part7 = Math.Round(normalDistribution.Sample(), 0);
+					if (part7 >= minLoad && part7 < maxLoad)
+					{
+						randValueLoadSummer.Add(part7);
+					}
+				}
+				else if (q > (ls1 + ls2) && q <= (ls1 + ls2 + ls3))
+				{
+					Normal normalDistribution = new Normal(moLS3, skoLS3);
+					double part8 = Math.Round(normalDistribution.Sample(), 0);
+					if (part8 >= minLoad && part8 < maxLoad)
+					{
+						randValueLoadSummer.Add(part8);
+					}
+				}
+			}
+
+			// СВ нагрузка ЗИМА
+			while (randValueLoadWinter.Count < 59676)
+			{
+				double q = rand.NextDouble();
+				if (q > 0 && q <= lw1)
+				{
+					Normal normalDistribution = new Normal(moLW1, skoLW1);
+					double part9 = Math.Round(normalDistribution.Sample(), 0);
+					if (part9 >= minLoad && part9 < maxLoad)
+					{
+						randValueLoadWinter.Add(part9);
+					}
+				}
+				else if (q > lw1 && q <= (lw1 + lw2))
+				{
+					Normal normalDistribution = new Normal(moLW2, skoLW2);
+					double part10 = Math.Round(normalDistribution.Sample(), 0);
+					if (part10 >= minLoad && part10 < maxLoad)
+					{
+						randValueLoadWinter.Add(part10);
+					}
+				}
+				else if (q > (lw1 + lw2) && q <= (lw1 + lw2 + lw3))
+				{
+					Normal normalDistribution = new Normal(moLW3, skoLW3);
+					double part11 = Math.Round(normalDistribution.Sample(), 0);
+					if (part11 >= minLoad && part11 < maxLoad)
+					{
+						randValueLoadWinter.Add(part11);
 					}
 				}
 			}
 
 			// Путь до файла Excel Результат
-			string folder = @"C:\Users\Анастасия\Desktop\NewWork\filesExcel";
+			string folder = @"C:\Users\Анастасия\Desktop\NewWork\ResultRandom";
 			string file1 = "Summer.xlsx";
-			string file2 = "Winter.xlsx";
 			string xlsxFile1 = Path.Combine(folder, file1);
 
 			// Создание книги и листа
-			Application excelApp = new Application();
-			Workbook workbook = excelApp.Workbooks.Add();
-			Worksheet worksheet = workbook.Sheets.Add();
-			worksheet.Name = "Случайные величины";
+			Application excelApp1 = new Application();
+			Workbook workbook1 = excelApp1.Workbooks.Add();
+			Worksheet worksheet1 = workbook1.Sheets.Add();
+			worksheet1.Name = "Значения";
 
 			// Запись значений в файл Excel
-			for (int i = 0; i < 105409; i++)
+			for (int i = 0; i < 45733; i++)
 			{
 				// Получаем диапазон ячеек начиная с ячейки A1
-				Range range = worksheet.Range["A1"];
+				Range range = worksheet1.Range["A1"];
 
 				// Запись случайной величины в столбец А - генерация
 				range.Offset[0, 0].Value = "Генерация";
-				range.Offset[i + 1, 0].Value = randValueGen[i];
+				range.Offset[i + 1, 0].Value = randValueGenSummer[i];
 
 				// Запись случайной величины в столбец B - нагрузка
 				range.Offset[0, 1].Value = "Нагрузка";
-				range.Offset[i + 1, 1].Value = randValueLoad[i];
-
-				// Запись случайной величины в столбец C - Пеледуй - Сухой Лог I цепь
-				range.Offset[0, 2].Value = "Пеледуй - Сухой Лог I цепь";
-				range.Offset[i + 1, 2].Value = v1PeledSyxLog[i];
-
-				// Запись случайной величины в столбец D - Пеледуй - Сухой Лог II цепь
-				range.Offset[0, 3].Value = "Пеледуй - Сухой Лог II цепь";
-				range.Offset[i + 1, 3].Value = v2PeledSyxLog[i];
-
-				// Запись случайной величины в столбец E - Таксимо - Мамакан I цепь
-				range.Offset[0, 4].Value = "Таксимо - Мамакан I цепь";
-				range.Offset[i + 1, 4].Value = v1TaksimoMamakan[i];
-
-				// Запись случайной величины в столбец F - Таксимо - Мамакан II цепь
-				range.Offset[0, 5].Value = "Таксимо - Мамакан II цепь";
-				range.Offset[i + 1, 5].Value = v2TaksimoMamakan[i];
-
-				// Запись случайной величины в столбец G - КС Пеледуй - Сухой Лог
-				range.Offset[0, 6].Value = "КС Пеледуй - Сухой Лог";
-				range.Offset[i + 1, 6].Value = ksPeledSyxLog[i];
-
-				// Запись случайной величины в столбец H - КС Таксимо - Мамакан
-				range.Offset[0, 7].Value = "КС Таксимо - Мамакан";
-				range.Offset[i + 1, 7].Value = ksTaksimoMamakan[i];
-
-				// Запись случайной величины в столбец I - СМЗУ КС_МДП (Пеледуй - Сухой Лог)
-				range.Offset[0, 8].Value = "СМЗУ КС_МДП (П-СХ)";
-				range.Offset[i + 1, 8].Value = smzyPSL[i];
-
-				// Запись случайной величины в столбец J - СМЗУ КС_МДП (Таксимо - Мамакан)
-				range.Offset[0, 9].Value = "СМЗУ КС_МДП (Т-М)";
-				range.Offset[i + 1, 9].Value = smzyTM[i];
-
-				// Запись случайной величины в столбец K - ПУР КС_МДП (Пеледуй - Сухой Лог)
-				range.Offset[0, 10].Value = "ПУР КС_МДП (П-СХ)";
-				range.Offset[i + 1, 10].Value = pyrPSL[i];
-
-				// Запись случайной величины в столбец L - ПУР КС_МДП (Таксимо - Мамакан)
-				range.Offset[0, 11].Value = "ПУР КС_МДП (Т-М)";
-				range.Offset[i + 1, 11].Value = pyrTM[i];
-
-				// Запись случайной величины в столбец M - ПУР1 КС_МДП (Таксимо - Мамакан)
-				range.Offset[0, 12].Value = "ПУР1 КС_МДП (Т-М)";
-				range.Offset[i + 1, 12].Value = pyrTM1[i];
+				range.Offset[i + 1, 1].Value = randValueLoadSummer[i];
 			}
 
-			workbook.SaveAs(xlsxFile);
-			workbook.Close();
-			excelApp.Quit();
+			workbook1.SaveAs(xlsxFile1);
+			workbook1.Close();
+			excelApp1.Quit();
+
+			string file2 = "Winter.xlsx";
+			string xlsxFile2 = Path.Combine(folder, file2);
+
+			// Создание книги и листа
+			Application excelApp2 = new Application();
+			Workbook workbook2 = excelApp2.Workbooks.Add();
+			Worksheet worksheet2 = workbook2.Sheets.Add();
+			worksheet2.Name = "Значения";
+
+			// Запись значений в файл Excel
+			for (int i = 0; i < 59676; i++)
+			{
+				// Получаем диапазон ячеек начиная с ячейки A1
+				Range range = worksheet2.Range["A1"];
+
+				// Запись случайной величины в столбец А - генерация
+				range.Offset[0, 0].Value = "Генерация";
+				range.Offset[i + 1, 0].Value = randValueGenWinter[i];
+
+				// Запись случайной величины в столбец B - нагрузка
+				range.Offset[0, 1].Value = "Нагрузка";
+				range.Offset[i + 1, 1].Value = randValueLoadWinter[i];
+			}
+
+			workbook2.SaveAs(xlsxFile2);
+			workbook2.Close();
+			excelApp2.Quit();
 
 			// Останавливаем счетчик
 			stopwatch.Stop();
 
 			Console.WriteLine($"\nВремя расчета: {stopwatch.ElapsedMilliseconds} мс\n" +
-				$"Файл Excel успешно сохранен по пути: {xlsxFile}\n" +
-				$"Количество СВ генерации: {randValueGen.Count}\n" +
-				$"Количество СВ нагрузки: {randValueLoad.Count}\n" +
-				$"Количество просчитанных режимов: {numberYR}\n");
+				$"Файл ExcelSummer успешно сохранен по пути: {xlsxFile1}\n" +
+				$"Файл ExcelWinter успешно сохранен по пути: {xlsxFile2}\n" +
+				$"Количество СВ генерации ЗИМА: {randValueGenWinter.Count}\n" +
+				$"Количество СВ генерации ЛЕТО: {randValueGenSummer.Count}\n" +
+				$"Количество СВ нагрузки ЗИМА: {randValueLoadWinter.Count}\n" +
+				$"Количество СВ нагрузки ЛЕТО: {randValueLoadSummer.Count}\n");
 
 			Console.ReadKey();
 		}
