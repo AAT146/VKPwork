@@ -35,15 +35,15 @@ namespace VKPwork
 			double gs1 = 0.6;
 			double skoGS1 = 1.52;
 			double moGS1 = 88;
-			double gs2 = 0.4;
+			double gs2 = 0.02;
 			double lowerS = 34;
 			double upperS = 84;
 
 			// Константы з.распр. генерации ГЭС - ЗИМА
-			double gw1 = 0.10;
+			double gw1 = 0.13;
 			double skoGW1 = 3.4;
 			double moGW1 = 19;
-			double gw2 = 0.05;
+			double gw2 = 0.02;
 			double gw3 = 0.85;
 			double skoGW3 = 3.4;
 			double moGW3 = 14;
