@@ -32,22 +32,22 @@ namespace VKPwork
 			Console.WriteLine($"Работа алгоритма.\n");
 
 			// Константы для з.распр. генерации ГЭС - ЛЕТО
-			double gs1 = 0.993;
+			double gs1 = 0.6;
 			double skoGS1 = 1.52;
 			double moGS1 = 88;
-			double gs2 = 0.007;
+			double gs2 = 0.4;
 			double lowerS = 34;
 			double upperS = 84;
 
 			// Константы з.распр. генерации ГЭС - ЗИМА
-			double gw1 = 0.148;
+			double gw1 = 0.10;
 			double skoGW1 = 3.4;
 			double moGW1 = 19;
-			double gw2 = 0.002;
+			double gw2 = 0.05;
 			double gw3 = 0.85;
 			double skoGW3 = 3.4;
 			double moGW3 = 14;
-			double lowerW = 25;
+			double lowerW = 26;
 			double upperW = 66;
 
 			// Min&Max знаечния генерации
