@@ -18,6 +18,11 @@ namespace VKPwork
 	/// </summary>
 	public class Program
 	{
+		static double MapToRange(double value, double min, double max)
+		{
+			return min + value * (max - min);
+		}
+
 		/// <summary>
 		/// Упрощенное моделирование.
 		/// </summary>
@@ -32,27 +37,27 @@ namespace VKPwork
 			Console.WriteLine($"Работа алгоритма.\n");
 
 			// Константы для з.распр. генерации ГЭС - ЛЕТО
-			double gs1 = 0.5;
-			double skoGS1 = 1.52;
-			double moGS1 = 88;
-			double gs2 = 0.1;
+			double gs1 = 0.85;
+			double skoGS1 = 3;
+			double moGS1 = 91;
+			double gs2 = 0.075;
 			double lowerS = 34;
-			double upperS = 84;
+			double upperS = 83;
 
 			// Константы з.распр. генерации ГЭС - ЗИМА
 			double gw1 = 0.13;
-			double skoGW1 = 3.4;
+			double skoGW1 = 3.2;
 			double moGW1 = 19;
-			double gw2 = 0.05;
+			double gw2 = 0.07;
 			double gw3 = 0.85;
-			double skoGW3 = 3.4;
+			double skoGW3 = 3.2;
 			double moGW3 = 14;
 			double lowerW = 26;
 			double upperW = 66;
 
 			// Min&Max знаечния генерации
 			double minGen = 8;
-			double maxGen = 87;
+			double maxGen = 89;
 
 			// Константы з.распр. нагрузки - ЛЕТО
 			double ls1 = 0.27;
@@ -91,12 +96,12 @@ namespace VKPwork
 			List<double> randValueLoadSummer = new List<double>();
 			List<double> randValueLoadWinter = new List<double>();
 
-			// СВ генерация ЛЕТО
+			//// СВ генерация ЛЕТО
 			while (randValueGenSummer.Count < 45733)
 			{
 				double q = rand.NextDouble();
 
-				if (q > 0 && q <= gs1)
+				if (q >= 0 && q <= gs1)
 				{
 					Normal normalDistribution = new Normal(moGS1, skoGS1);
 					double part1 = Math.Round(normalDistribution.Sample(), 0);
@@ -109,14 +114,11 @@ namespace VKPwork
 				{
 					ContinuousUniform uniformDist = new ContinuousUniform(lowerS, upperS);
 					double part2 = Math.Round(uniformDist.Sample(), 0);
-					if (part2 >= minGen && part2 < maxGen)
-					{
-						randValueGenSummer.Add(part2);
-					}
+					randValueGenSummer.Add(part2);
 				}
 			}
 
-			// СВ генерация ЗИМА
+			//СВ генерация ЗИМА
 			while (randValueGenWinter.Count < 59676)
 			{
 				double q = rand.NextDouble();
@@ -151,77 +153,77 @@ namespace VKPwork
 			}
 
 			// СВ нагрузка ЛЕТО
-			//while (randValueLoadSummer.Count < 45733)
-			//{
-			//	double q = rand.NextDouble();
-			//	if (q > 0 && q <= ls1)
-			//	{
-			//		Normal normalDistribution = new Normal(moLS1, skoLS1);
-			//		double part6 = Math.Round(normalDistribution.Sample(), 0);
-			//		if (part6 >= minLoad && part6 < maxLoad)
-			//		{
-			//			randValueLoadSummer.Add(part6);
-			//		}
-			//	}
-			//	else if (q > ls1 && q <= (ls1 + ls2))
-			//	{
-			//		Normal normalDistribution = new Normal(moLS2, skoLS2);
-			//		double part7 = Math.Round(normalDistribution.Sample(), 0);
-			//		if (part7 >= minLoad && part7 < maxLoad)
-			//		{
-			//			randValueLoadSummer.Add(part7);
-			//		}
-			//	}
-			//	else if (q > (ls1 + ls2) && q <= (ls1 + ls2 + ls3))
-			//	{
-			//		Normal normalDistribution = new Normal(moLS3, skoLS3);
-			//		double part8 = Math.Round(normalDistribution.Sample(), 0);
-			//		if (part8 >= minLoad && part8 < maxLoad)
-			//		{
-			//			randValueLoadSummer.Add(part8);
-			//		}
-			//	}
-			//}
+			while (randValueLoadSummer.Count < 45733)
+			{
+				double q = rand.NextDouble();
+				if (q > 0 && q <= ls1)
+				{
+					Normal normalDistribution = new Normal(moLS1, skoLS1);
+					double part6 = Math.Round(normalDistribution.Sample(), 0);
+					if (part6 >= minLoad && part6 < maxLoad)
+					{
+						randValueLoadSummer.Add(part6);
+					}
+				}
+				else if (q > ls1 && q <= (ls1 + ls2))
+				{
+					Normal normalDistribution = new Normal(moLS2, skoLS2);
+					double part7 = Math.Round(normalDistribution.Sample(), 0);
+					if (part7 >= minLoad && part7 < maxLoad)
+					{
+						randValueLoadSummer.Add(part7);
+					}
+				}
+				else if (q > (ls1 + ls2) && q <= (ls1 + ls2 + ls3))
+				{
+					Normal normalDistribution = new Normal(moLS3, skoLS3);
+					double part8 = Math.Round(normalDistribution.Sample(), 0);
+					if (part8 >= minLoad && part8 < maxLoad)
+					{
+						randValueLoadSummer.Add(part8);
+					}
+				}
+			}
 
 			// СВ нагрузка ЗИМА
-			//while (randValueLoadWinter.Count < 59676)
-			//{
-			//	double q = rand.NextDouble();
-			//	if (q > 0 && q <= lw1)
-			//	{
-			//		Normal normalDistribution = new Normal(moLW1, skoLW1);
-			//		double part9 = Math.Round(normalDistribution.Sample(), 0);
-			//		if (part9 >= minLoad && part9 < maxLoad)
-			//		{
-			//			randValueLoadWinter.Add(part9);
-			//		}
-			//	}
-			//	else if (q > lw1 && q <= (lw1 + lw2))
-			//	{
-			//		Normal normalDistribution = new Normal(moLW2, skoLW2);
-			//		double part10 = Math.Round(normalDistribution.Sample(), 0);
-			//		if (part10 >= minLoad && part10 < maxLoad)
-			//		{
-			//			randValueLoadWinter.Add(part10);
-			//		}
-			//	}
-			//	else if (q > (lw1 + lw2) && q <= (lw1 + lw2 + lw3))
-			//	{
-			//		Normal normalDistribution = new Normal(moLW3, skoLW3);
-			//		double part11 = Math.Round(normalDistribution.Sample(), 0);
-			//		if (part11 >= minLoad && part11 < maxLoad)
-			//		{
-			//			randValueLoadWinter.Add(part11);
-			//		}
-			//	}
-			//}
+			while (randValueLoadWinter.Count < 59676)
+			{
+				double q = rand.NextDouble();
+				if (q > 0 && q <= lw1)
+				{
+					Normal normalDistribution = new Normal(moLW1, skoLW1);
+					double part9 = Math.Round(normalDistribution.Sample(), 0);
+					if (part9 >= minLoad && part9 < maxLoad)
+					{
+						randValueLoadWinter.Add(part9);
+					}
+				}
+				else if (q > lw1 && q <= (lw1 + lw2))
+				{
+					Normal normalDistribution = new Normal(moLW2, skoLW2);
+					double part10 = Math.Round(normalDistribution.Sample(), 0);
+					if (part10 >= minLoad && part10 < maxLoad)
+					{
+						randValueLoadWinter.Add(part10);
+					}
+				}
+				else if (q > (lw1 + lw2) && q <= (lw1 + lw2 + lw3))
+				{
+					Normal normalDistribution = new Normal(moLW3, skoLW3);
+					double part11 = Math.Round(normalDistribution.Sample(), 0);
+					if (part11 >= minLoad && part11 < maxLoad)
+					{
+						randValueLoadWinter.Add(part11);
+					}
+				}
+			}
 
 			// Путь до файла Excel Результат
 			string folder = @"C:\Users\Анастасия\Desktop\NewWork\ResultRandom";
 			string file1 = "Summer.xlsx";
 			string xlsxFile1 = Path.Combine(folder, file1);
 
-			// Создание книги и листа
+			//Создание книги и листа
 			Application excelApp1 = new Application();
 			Workbook workbook1 = excelApp1.Workbooks.Add();
 			Worksheet worksheet1 = workbook1.Sheets.Add();
@@ -237,9 +239,9 @@ namespace VKPwork
 				range.Offset[0, 0].Value = "Генерация";
 				range.Offset[i + 1, 0].Value = randValueGenSummer[i];
 
-				// Запись случайной величины в столбец B - нагрузка
-				//range.Offset[0, 1].Value = "Нагрузка";
-				//range.Offset[i + 1, 1].Value = randValueLoadSummer[i];
+				//Запись случайной величины в столбец B -нагрузка
+				range.Offset[0, 1].Value = "Нагрузка";
+				range.Offset[i + 1, 1].Value = randValueLoadSummer[i];
 			}
 
 			workbook1.SaveAs(xlsxFile1);
@@ -266,8 +268,8 @@ namespace VKPwork
 				range.Offset[i + 1, 0].Value = randValueGenWinter[i];
 
 				// Запись случайной величины в столбец B - нагрузка
-				//range.Offset[0, 1].Value = "Нагрузка";
-				//range.Offset[i + 1, 1].Value = randValueLoadWinter[i];
+				range.Offset[0, 1].Value = "Нагрузка";
+				range.Offset[i + 1, 1].Value = randValueLoadWinter[i];
 			}
 
 			workbook2.SaveAs(xlsxFile2);
@@ -278,7 +280,7 @@ namespace VKPwork
 			stopwatch.Stop();
 
 			Console.WriteLine($"\nВремя расчета: {stopwatch.ElapsedMilliseconds} мс\n" +
-				$"Файл ExcelSummer успешно сохранен по пути: {xlsxFile1}\n" +
+				//$"Файл ExcelSummer успешно сохранен по пути: {xlsxFile1}\n" +
 				$"Файл ExcelWinter успешно сохранен по пути: {xlsxFile2}\n" +
 				$"Количество СВ генерации ЗИМА: {randValueGenWinter.Count}\n" +
 				$"Количество СВ генерации ЛЕТО: {randValueGenSummer.Count}\n" +
