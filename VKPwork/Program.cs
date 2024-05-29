@@ -18,24 +18,12 @@ namespace VKPwork
 	/// </summary>
 	public class Program
 	{
-		static double MapToRange(double value, double min, double max)
-		{
-			return min + value * (max - min);
-		}
-
 		/// <summary>
-		/// Упрощенное моделирование.
+		/// Метод: генерация СВ ГЭС (ЛЕТО)
 		/// </summary>
-		public static void Main()
+		/// <returns>Список СВ по Ргэс(лето)</returns>
+		public static List<double> RndValueGenSummer()
 		{
-			// Создание объекта времени
-			Stopwatch stopwatch = new Stopwatch();
-
-			// Засекаем время начала операции
-			stopwatch.Start();
-
-			Console.WriteLine($"Работа алгоритма.\n");
-
 			// Константы для з.распр. генерации ГЭС - ЛЕТО
 			double gs1 = 0.85;
 			double skoGS1 = 3;
@@ -43,60 +31,16 @@ namespace VKPwork
 			double gs2 = 0.075;
 			double lowerS = 34;
 			double upperS = 83;
-
-			// Константы з.распр. генерации ГЭС - ЗИМА
-			double gw1 = 0.13;
-			double skoGW1 = 3.2;
-			double moGW1 = 19;
-			double gw2 = 0.07;
-			double gw3 = 0.85;
-			double skoGW3 = 3.2;
-			double moGW3 = 14;
-			double lowerW = 26;
-			double upperW = 66;
-
-			// Min&Max знаечния генерации
 			double minGen = 8;
 			double maxGen = 89;
-
-			// Константы з.распр. нагрузки - ЛЕТО
-			double ls1 = 0.27;
-			double skoLS1 = 10;
-			double moLS1 = 101;
-			double ls2 = 0.50;
-			double skoLS2 = 6;
-			double moLS2 = 110;
-			double ls3 = 0.23;
-			double skoLS3 = 5.5;
-			double moLS3 = 125;
-
-			// Константы з.распр. нагрузки - ЗИМА
-			double lw1 = 0.41;
-			double skoLW1 = 8;
-			double moLW1 = 110.5;
-			double lw2 = 0.42;
-			double skoLW2 = 9;
-			double moLW2 = 117.8;
-			double lw3 = 0.17;
-			double skoLW3 = 5;
-			double moLW3 = 113;
-
-			// Min&Max знаечния нагрузки
-			double minLoad = 10;
-			double maxLoad = 167;
 
 			// Генерация случайных величин (СВ)
 			Random rand = new Random();
 
 			// Лист для хранения СВ генерации
 			List<double> randValueGenSummer = new List<double>();
-			List<double> randValueGenWinter = new List<double>();
 
-			// Лист для хранения СВ нагрузки
-			List<double> randValueLoadSummer = new List<double>();
-			List<double> randValueLoadWinter = new List<double>();
-
-			//// СВ генерация ЛЕТО
+			// СВ генерация ЛЕТО
 			while (randValueGenSummer.Count < 45733)
 			{
 				double q = rand.NextDouble();
@@ -117,6 +61,34 @@ namespace VKPwork
 					randValueGenSummer.Add(part2);
 				}
 			}
+
+			return randValueGenSummer;
+		}
+
+		/// <summary>
+		/// Метод: генерация СВ ГЭС (ЗИМА)
+		/// </summary>
+		/// <returns>Список СВ по Ргэс(зима)</returns>
+		public static List<double> RndValueGenWinter()
+		{
+			// Константы з.распр. генерации ГЭС - ЗИМА
+			double gw1 = 0.13;
+			double skoGW1 = 3.2;
+			double moGW1 = 19;
+			double gw2 = 0.07;
+			double gw3 = 0.85;
+			double skoGW3 = 3.2;
+			double moGW3 = 14;
+			double lowerW = 26;
+			double upperW = 66;
+			double minGen = 8;
+			double maxGen = 89;
+
+			// Генерация случайных величин (СВ)
+			Random rand = new Random();
+
+			// Лист для хранения СВ генерации
+			List<double> randValueGenWinter = new List<double>();
 
 			//СВ генерация ЗИМА
 			while (randValueGenWinter.Count < 59676)
@@ -152,6 +124,34 @@ namespace VKPwork
 				}
 			}
 
+			return randValueGenWinter;
+		}
+
+		/// <summary>
+		/// Метод: генерация СВ Нагрузки (ЛЕТО)
+		/// </summary>
+		/// <returns>Список СВ по Рнагр(лето)</returns>
+		public static List<double> RndValueLoadSummer()
+		{
+			// Константы з.распр. нагрузки - ЛЕТО
+			double ls1 = 0.27;
+			double skoLS1 = 10;
+			double moLS1 = 101;
+			double ls2 = 0.50;
+			double skoLS2 = 6;
+			double moLS2 = 110;
+			double ls3 = 0.23;
+			double skoLS3 = 5.5;
+			double moLS3 = 125;
+			double minLoad = 10;
+			double maxLoad = 167;
+
+			// Генерация случайных величин (СВ)
+			Random rand = new Random();
+
+			// Лист для хранения СВ нагрузки
+			List<double> randValueLoadSummer = new List<double>();
+
 			// СВ нагрузка ЛЕТО
 			while (randValueLoadSummer.Count < 45733)
 			{
@@ -184,6 +184,35 @@ namespace VKPwork
 					}
 				}
 			}
+
+			return randValueLoadSummer;
+		}
+
+		/// <summary>
+		/// Метод: генерация СВ Нагрузки (ЗИМА)
+		/// </summary>
+		/// <returns>Список СВ по Рнагр(зима)</returns>
+		public static List<double> RndValueLoadWinter()
+		{
+			// Константы з.распр. нагрузки - ЗИМА
+			double lw1 = 0.41;
+			double skoLW1 = 8;
+			double moLW1 = 110.5;
+			double lw2 = 0.42;
+			double skoLW2 = 9;
+			double moLW2 = 117.8;
+			double lw3 = 0.17;
+			double skoLW3 = 5;
+			double moLW3 = 113;
+			double minLoad = 10;
+			double maxLoad = 167;
+
+
+			// Генерация случайных величин (СВ)
+			Random rand = new Random();
+
+			// Лист для хранения СВ нагрузки
+			List<double> randValueLoadWinter = new List<double>();
 
 			// СВ нагрузка ЗИМА
 			while (randValueLoadWinter.Count < 59676)
@@ -218,74 +247,79 @@ namespace VKPwork
 				}
 			}
 
+			return randValueLoadWinter;
+		}
+
+		/// <summary>
+		/// Упрощенное моделирование.
+		/// </summary>
+		public static void Main()
+		{
+			// Создание объекта времени
+			Stopwatch stopwatch = new Stopwatch();
+
+			// Засекаем время начала операции
+			stopwatch.Start();
+
+			Console.WriteLine($"Работа алгоритма.\n");
+
 			// Путь до файла Excel Результат
 			string folder = @"C:\Users\Анастасия\Desktop\NewWork\ResultRandom";
-			string file1 = "Summer.xlsx";
-			string xlsxFile1 = Path.Combine(folder, file1);
+			string file = "ResultsSummerWinter.xlsx";
+			string xlsxFile = Path.Combine(folder, file);
 
 			//Создание книги и листа
-			Application excelApp1 = new Application();
-			Workbook workbook1 = excelApp1.Workbooks.Add();
-			Worksheet worksheet1 = workbook1.Sheets.Add();
-			worksheet1.Name = "Значения";
+			Application excelApp = new Application();
+			Workbook workbook = excelApp.Workbooks.Add();
+			Worksheet worksheet1 = workbook.Sheets.Add();
+			worksheet1.Name = "Лето";
+			Worksheet worksheet2 = workbook.Sheets.Add();
+			worksheet2.Name = "Зима";
 
 			// Запись значений в файл Excel
 			for (int i = 0; i < 45733; i++)
 			{
 				// Получаем диапазон ячеек начиная с ячейки A1
-				Range range = worksheet1.Range["A1"];
+				Range range1 = worksheet1.Range["A1"];
 
-				// Запись случайной величины в столбец А - генерация
-				range.Offset[0, 0].Value = "Генерация";
-				range.Offset[i + 1, 0].Value = randValueGenSummer[i];
+				// Запись СВ в л1 столбец А - генерация (лето)
+				range1.Offset[0, 0].Value = "Генерация";
+				range1.Offset[i + 1, 0].Value = RndValueGenSummer()[i];
 
-				//Запись случайной величины в столбец B -нагрузка
-				range.Offset[0, 1].Value = "Нагрузка";
-				range.Offset[i + 1, 1].Value = randValueLoadSummer[i];
+				//Запись СВ в л1 столбец B -нагрузка (лето)
+				range1.Offset[0, 1].Value = "Нагрузка";
+				range1.Offset[i + 1, 1].Value = RndValueLoadSummer()[i];
 			}
-
-			workbook1.SaveAs(xlsxFile1);
-			workbook1.Close();
-			excelApp1.Quit();
-
-			string file2 = "Winter.xlsx";
-			string xlsxFile2 = Path.Combine(folder, file2);
-
-			// Создание книги и листа
-			Application excelApp2 = new Application();
-			Workbook workbook2 = excelApp2.Workbooks.Add();
-			Worksheet worksheet2 = workbook2.Sheets.Add();
-			worksheet2.Name = "Значения";
 
 			// Запись значений в файл Excel
 			for (int i = 0; i < 59676; i++)
 			{
 				// Получаем диапазон ячеек начиная с ячейки A1
-				Range range = worksheet2.Range["A1"];
+				Range range2 = worksheet2.Range["A1"];
 
-				// Запись случайной величины в столбец А - генерация
-				range.Offset[0, 0].Value = "Генерация";
-				range.Offset[i + 1, 0].Value = randValueGenWinter[i];
+				// Запись СВ в л2 столбец А - генерация (зима)
+				range2.Offset[0, 0].Value = "Генерация";
+				range2.Offset[i + 1, 0].Value = RndValueGenWinter()[i];
 
-				// Запись случайной величины в столбец B - нагрузка
-				range.Offset[0, 1].Value = "Нагрузка";
-				range.Offset[i + 1, 1].Value = randValueLoadWinter[i];
+				//Запись случайной величины в столбец B -нагрузка
+				range2.Offset[0, 1].Value = "Нагрузка";
+				range2.Offset[i + 1, 1].Value = RndValueLoadWinter()[i];
 			}
 
-			workbook2.SaveAs(xlsxFile2);
-			workbook2.Close();
-			excelApp2.Quit();
+			workbook.SaveAs(xlsxFile);
+			workbook.Close();
+			excelApp.Quit();
 
 			// Останавливаем счетчик
 			stopwatch.Stop();
 
 			Console.WriteLine($"\nВремя расчета: {stopwatch.ElapsedMilliseconds} мс\n" +
 				//$"Файл ExcelSummer успешно сохранен по пути: {xlsxFile1}\n" +
-				$"Файл ExcelWinter успешно сохранен по пути: {xlsxFile2}\n" +
-				$"Количество СВ генерации ЗИМА: {randValueGenWinter.Count}\n" +
-				$"Количество СВ генерации ЛЕТО: {randValueGenSummer.Count}\n" +
-				$"Количество СВ нагрузки ЗИМА: {randValueLoadWinter.Count}\n" +
-				$"Количество СВ нагрузки ЛЕТО: {randValueLoadSummer.Count}\n");
+				$"Файл ExcelWinter успешно сохранен по пути: {xlsxFile}\n" +
+				$"Количество СВ генерации ЗИМА: {RndValueGenWinter().Count}\n" +
+				$"Количество СВ генерации ЛЕТО: {RndValueGenSummer().Count}\n" +
+				$"Количество СВ нагрузки ЗИМА: {RndValueLoadWinter().Count}\n" +
+				$"Количество СВ нагрузки ЛЕТО: {RndValueLoadSummer().Count}\n");
 
 			Console.ReadKey();
 		}
