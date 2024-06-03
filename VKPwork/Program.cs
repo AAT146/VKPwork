@@ -21,30 +21,6 @@ namespace VKPwork
 	public class Program
 	{
 		/// <summary>
-		/// Метод: чтение файла формата Excel.
-		/// </summary>
-		/// <param name="filePath">Файл Excel.</param>
-		/// <returns>Массив данных.</returns>
-		public static List<double> ReadFileFromExcel(string filePath)
-		{
-			// Установка контекста лицензирования
-			ExcelPackage.LicenseContext = LicenseContext.NonCommercial;
-
-			using (var package = new ExcelPackage(new FileInfo(filePath)))
-			{
-				var worksheet = package.Workbook.Worksheets[0];
-				List<double> data = new List<double>(worksheet.Dimension.Rows);
-
-				for (int i = 1; i <= worksheet.Dimension.Rows; i++)
-				{
-					data.Add(worksheet.Cells[i, 1].GetValue<double>());
-				}
-
-				return data;
-			}
-		}
-
-		/// <summary>
 		/// Метод: генерация СВ ГЭС (ЛЕТО)
 		/// </summary>
 		/// <returns>Список СВ по Ргэс(лето)</returns>
@@ -401,7 +377,7 @@ namespace VKPwork
 				ksTaksimoMamakan.Add(Math.Round(valueSech.Z[index8], 0));
 			}
 
-			// Файл Excel значений МДП по КС
+			// Файл Excel значений МДП
 			string xlsxMdpPeledSyxLog = @"C:\Users\Анастасия\Desktop\ПроизПрактика\Растр\KsPeledSyxLog.xlsx";
 			string xlsxMdpTaksimoMamakan = @"C:\Users\Анастасия\Desktop\ПроизПрактика\Растр\KsTaksimoMamakan.xlsx";
 			string xlsxPYRPeledSyxLog = @"C:\Users\Анастасия\Desktop\ПроизПрактика\Растр\PYRPeledSyxLog.xlsx";
@@ -409,11 +385,11 @@ namespace VKPwork
 			string xlsxPYRTaksimoMamakan1 = @"C:\Users\Анастасия\Desktop\ПроизПрактика\Растр\PYRTaksimoMamakan1.xlsx";
 
 			// Чтение данных из файла Excel
-			List<double> mdpPeledSyxLog = ReadFileFromExcel(xlsxMdpPeledSyxLog);
-			List<double> mdpTaksimoMamakan = ReadFileFromExcel(xlsxMdpTaksimoMamakan);
-			List<double> pyrPeledSyxLog = ReadFileFromExcel(xlsxPYRPeledSyxLog);
-			List<double> pyrTaksimoMamakan = ReadFileFromExcel(xlsxPYRTaksimoMamakan);
-			List<double> pyrTaksimoMamakan1 = ReadFileFromExcel(xlsxPYRTaksimoMamakan1);
+			List<double> mdpPeledSyxLog = Excel.ReadFileFromExcel(xlsxMdpPeledSyxLog);
+			List<double> mdpTaksimoMamakan = Excel.ReadFileFromExcel(xlsxMdpTaksimoMamakan);
+			List<double> pyrPeledSyxLog = Excel.ReadFileFromExcel(xlsxPYRPeledSyxLog);
+			List<double> pyrTaksimoMamakan = Excel.ReadFileFromExcel(xlsxPYRTaksimoMamakan);
+			List<double> pyrTaksimoMamakan1 = Excel.ReadFileFromExcel(xlsxPYRTaksimoMamakan1);
 
 			// Определение разницы между КС и МДП
 			List<double> smzyPSL = ComparisonHelper.CompareLists(ksPeledSyxLog, mdpPeledSyxLog);
