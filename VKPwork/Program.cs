@@ -10,6 +10,7 @@ using ClassLibrary;
 using System.Linq;
 using System.Reflection;
 using System.IO.Ports;
+using MathNet.Numerics.Differentiation;
 
 
 namespace VKPwork
@@ -342,50 +343,56 @@ namespace VKPwork
 
 			double numberYR = 0;
 
-			// Цикл расчета в RastrWin3 (ЗИМА)
+			// Цикл расчета в RastrWin3 (ЗИМА || ДО)
 			for (int i = 0; i < 59676; i++)
 			{
 				// Присвоение нового числа мощности генерации
 				var setSelAgr = "Num=" + 6;
 				tableGenYR.SetSel(setSelAgr);
 				var index1 = tableGenYR.FindNextSel[-1];
-				pGenYR.Z[index1] = [i];
+				pGenYR.Z[index1] = RndValueGenWinter()[i];
 
 				// Присвоение нового числа мощности нагрузки
 				var setSelNy = "ny=" + 5;
 				tableNode.SetSel(setSelNy);
 				var index2 = tableNode.FindNextSel[-1];
-				activeLoad.Z[index2] = randValueLoad[i];
+				activeLoad.Z[index2] = RndValueLoadWinter()[i];
 
-				// Присваивание сгенерированного состояния цепям линий
-				var setSelVetv1 = "ip=" + 3 + "&" + "iq=" + 2 + "&" + "np=" + 1;   // П-СХ № 1
-				tableVetv.SetSel(setSelVetv1);
-				var number1 = tableVetv.FindNextSel[-1];
-				staVetv.Z[number1] = randSostPeledSyxLog1[i];
+				// Определение номера схемы
+				Random random = new Random();
+				int r = random.Next(1, 53);
 
-				var setSelVetv2 = "ip=" + 3 + "&" + "iq=" + 2 + "&" + "np=" + 2;   // П-СХ № 2
-				tableVetv.SetSel(setSelVetv2);
-				var number2 = tableVetv.FindNextSel[-1];
-				staVetv.Z[number2] = randSostPeledSyxLog2[i];
+				// Создание экземпляра класса
+				SchemeNumber numberScheme = new SchemeNumber();
+				PowerLineAfter powerLineAfter = new PowerLineAfter();
 
-				var setSelVetv3 = "ip=" + 4 + "&" + "iq=" + 2 + "&" + "np=" + 1;   // Т-М № 1
-				tableVetv.SetSel(setSelVetv3);
-				var number3 = tableVetv.FindNextSel[-1];
-				staVetv.Z[number3] = randSostTaksimoMamakan1[i];
-
-				var setSelVetv4 = "ip=" + 4 + "&" + "iq=" + 2 + "&" + "np=" + 2;   // Т-М № 2
-				tableVetv.SetSel(setSelVetv4);
-				var number4 = tableVetv.FindNextSel[-1];
-				staVetv.Z[number4] = randSostTaksimoMamakan2[i];
+				// Состояние ветви
+				for (int  j = 0; j < numberScheme.numberAfter.Length; j++)
+				{
+					if (numberScheme.numberAfter[j] == r)
+					{
+						int[][] workScheme = powerLineAfter.schemes[r - 1];
+						foreach (int[] array in workScheme)
+						{
+							var setSelVetv = "ip=" + array[1] + "&" + "iq=" + array[2] + "&" + "np=" + array[3];
+							tableVetv.SetSel(setSelVetv);
+							var number = tableVetv.FindNextSel[-1];
+							staVetv.Z[number] = 1;
+						}
+					}
+				}
 
 				// Расчет УР
 				_ = rastr.rgm("");
-				numberYR += 1;
+				
+				// Величина снижения нагрузки при каждой итерации
+				int deltaLoad = 1;
 
-				// Считывание перетоков по каждому КС
+				// КС Пеледуй - Сухой-Лог. Ограничения нагрузки
 				var setSelNs1 = "ns=" + 1;
 				tableSechen.SetSel(setSelNs1);
 				var index7 = tableSechen.FindNextSel[-1];
+
 				ksPeledSyxLog.Add(Math.Round(valueSech.Z[index7], 0));
 
 				var setSelNs2 = "ns=" + 2;

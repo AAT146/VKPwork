@@ -110,8 +110,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Excel.cs" />
-    <Compile Include="NumbRepSchAfter.cs" />
-    <Compile Include="NumbRepSchBefore.cs" />
+    <Compile Include="SchemeNumber.cs" />
     <Compile Include="ComparisonHelper.cs" />
     <Compile Include="PowerLineAfter.cs" />
     <Compile Include="PowerLineBefore.cs" />
