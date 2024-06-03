@@ -452,5 +452,10 @@ namespace ClassLibrary
 		{
 			new int[] { 7, 1, 1 }
 		};
+
+		public static int[][] scheme71 = new int[][]
+		{
+			new int[] { 5004, 5006, 2 }
+		};
 	}
 }

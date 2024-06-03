@@ -1,16 +1,11 @@
-﻿using System;
-using System.Collections.Generic;
-using System.IO;
-using ASTRALib;
-using OfficeOpenXml;
-using MathNet.Numerics.Distributions;
-using System.Diagnostics;
-using Microsoft.Office.Interop.Excel;
+﻿using ASTRALib;
 using ClassLibrary;
+using Microsoft.Office.Interop.Excel;
+using System;
+using System.Collections.Generic;
+using System.Diagnostics;
+using System.IO;
 using System.Linq;
-using System.Reflection;
-using System.IO.Ports;
-using MathNet.Numerics.Differentiation;
 
 
 namespace VKPwork
@@ -20,238 +15,6 @@ namespace VKPwork
 	/// </summary>
 	public class Program
 	{
-		/// <summary>
-		/// Метод: генерация СВ ГЭС (ЛЕТО)
-		/// </summary>
-		/// <returns>Список СВ по Ргэс(лето)</returns>
-		public static List<double> RndValueGenSummer()
-		{
-			// Константы для з.распр. генерации ГЭС - ЛЕТО
-			double gs1 = 0.85;
-			double skoGS1 = 3;
-			double moGS1 = 91;
-			double gs2 = 0.075;
-			double lowerS = 34;
-			double upperS = 83;
-			double minGen = 8;
-			double maxGen = 89;
-
-			// Генерация случайных величин (СВ)
-			Random rand = new Random();
-
-			// Лист для хранения СВ генерации
-			List<double> randValueGenSummer = new List<double>();
-
-			// СВ генерация ЛЕТО
-			while (randValueGenSummer.Count < 45733)
-			{
-				double q = rand.NextDouble();
-
-				if (q >= 0 && q <= gs1)
-				{
-					Normal normalDistribution = new Normal(moGS1, skoGS1);
-					double part1 = Math.Round(normalDistribution.Sample(), 0);
-					if (part1 >= minGen && part1 < maxGen)
-					{
-						randValueGenSummer.Add(part1);
-					}
-				}
-				else if (q > gs1 && q <= (gs1 + gs2))
-				{
-					ContinuousUniform uniformDist = new ContinuousUniform(lowerS, upperS);
-					double part2 = Math.Round(uniformDist.Sample(), 0);
-					randValueGenSummer.Add(part2);
-				}
-			}
-
-			return randValueGenSummer;
-		}
-
-		/// <summary>
-		/// Метод: генерация СВ ГЭС (ЗИМА)
-		/// </summary>
-		/// <returns>Список СВ по Ргэс(зима)</returns>
-		public static List<double> RndValueGenWinter()
-		{
-			// Константы з.распр. генерации ГЭС - ЗИМА
-			double gw1 = 0.13;
-			double skoGW1 = 3.2;
-			double moGW1 = 19;
-			double gw2 = 0.07;
-			double gw3 = 0.85;
-			double skoGW3 = 3.2;
-			double moGW3 = 14;
-			double lowerW = 26;
-			double upperW = 66;
-			double minGen = 8;
-			double maxGen = 89;
-
-			// Генерация случайных величин (СВ)
-			Random rand = new Random();
-
-			// Лист для хранения СВ генерации
-			List<double> randValueGenWinter = new List<double>();
-
-			//СВ генерация ЗИМА
-			while (randValueGenWinter.Count < 59676)
-			{
-				double q = rand.NextDouble();
-
-				if (q > 0 && q <= gw1)
-				{
-					Normal normalDistribution = new Normal(moGW1, skoGW1);
-					double part3 = Math.Round(normalDistribution.Sample(), 0);
-					if (part3 >= minGen && part3 < maxGen)
-					{
-						randValueGenWinter.Add(part3);
-					}
-				}
-				else if (q > gw1 && q <= (gw1 + gw2))
-				{
-					ContinuousUniform uniformDist = new ContinuousUniform(lowerW, upperW);
-					double part4 = Math.Round(uniformDist.Sample(), 0);
-					if (part4 >= minGen && part4 < maxGen)
-					{
-						randValueGenWinter.Add(part4);
-					}
-				}
-				else if (q > (gw1 + gw2) && q <= (gw1 + gw2 + gw3))
-				{
-					Normal normalDistribution = new Normal(moGW3, skoGW3);
-					double part5 = Math.Round(normalDistribution.Sample(), 0);
-					if (part5 >= minGen && part5 < maxGen)
-					{
-						randValueGenWinter.Add(part5);
-					}
-				}
-			}
-
-			return randValueGenWinter;
-		}
-
-		/// <summary>
-		/// Метод: генерация СВ Нагрузки (ЛЕТО)
-		/// </summary>
-		/// <returns>Список СВ по Рнагр(лето)</returns>
-		public static List<double> RndValueLoadSummer()
-		{
-			// Константы з.распр. нагрузки - ЛЕТО
-			double ls1 = 0.27;
-			double skoLS1 = 10;
-			double moLS1 = 101;
-			double ls2 = 0.50;
-			double skoLS2 = 6;
-			double moLS2 = 110;
-			double ls3 = 0.23;
-			double skoLS3 = 5.5;
-			double moLS3 = 125;
-			double minLoad = 10;
-			double maxLoad = 167;
-
-			// Генерация случайных величин (СВ)
-			Random rand = new Random();
-
-			// Лист для хранения СВ нагрузки
-			List<double> randValueLoadSummer = new List<double>();
-
-			// СВ нагрузка ЛЕТО
-			while (randValueLoadSummer.Count < 45733)
-			{
-				double q = rand.NextDouble();
-				if (q > 0 && q <= ls1)
-				{
-					Normal normalDistribution = new Normal(moLS1, skoLS1);
-					double part6 = Math.Round(normalDistribution.Sample(), 0);
-					if (part6 >= minLoad && part6 < maxLoad)
-					{
-						randValueLoadSummer.Add(part6);
-					}
-				}
-				else if (q > ls1 && q <= (ls1 + ls2))
-				{
-					Normal normalDistribution = new Normal(moLS2, skoLS2);
-					double part7 = Math.Round(normalDistribution.Sample(), 0);
-					if (part7 >= minLoad && part7 < maxLoad)
-					{
-						randValueLoadSummer.Add(part7);
-					}
-				}
-				else if (q > (ls1 + ls2) && q <= (ls1 + ls2 + ls3))
-				{
-					Normal normalDistribution = new Normal(moLS3, skoLS3);
-					double part8 = Math.Round(normalDistribution.Sample(), 0);
-					if (part8 >= minLoad && part8 < maxLoad)
-					{
-						randValueLoadSummer.Add(part8);
-					}
-				}
-			}
-
-			return randValueLoadSummer;
-		}
-
-		/// <summary>
-		/// Метод: генерация СВ Нагрузки (ЗИМА)
-		/// </summary>
-		/// <returns>Список СВ по Рнагр(зима)</returns>
-		public static List<double> RndValueLoadWinter()
-		{
-			// Константы з.распр. нагрузки - ЗИМА
-			double lw1 = 0.41;
-			double skoLW1 = 8;
-			double moLW1 = 110.5;
-			double lw2 = 0.42;
-			double skoLW2 = 9;
-			double moLW2 = 117.8;
-			double lw3 = 0.17;
-			double skoLW3 = 5;
-			double moLW3 = 113;
-			double minLoad = 10;
-			double maxLoad = 167;
-
-
-			// Генерация случайных величин (СВ)
-			Random rand = new Random();
-
-			// Лист для хранения СВ нагрузки
-			List<double> randValueLoadWinter = new List<double>();
-
-			// СВ нагрузка ЗИМА
-			while (randValueLoadWinter.Count < 59676)
-			{
-				double q = rand.NextDouble();
-				if (q > 0 && q <= lw1)
-				{
-					Normal normalDistribution = new Normal(moLW1, skoLW1);
-					double part9 = Math.Round(normalDistribution.Sample(), 0);
-					if (part9 >= minLoad && part9 < maxLoad)
-					{
-						randValueLoadWinter.Add(part9);
-					}
-				}
-				else if (q > lw1 && q <= (lw1 + lw2))
-				{
-					Normal normalDistribution = new Normal(moLW2, skoLW2);
-					double part10 = Math.Round(normalDistribution.Sample(), 0);
-					if (part10 >= minLoad && part10 < maxLoad)
-					{
-						randValueLoadWinter.Add(part10);
-					}
-				}
-				else if (q > (lw1 + lw2) && q <= (lw1 + lw2 + lw3))
-				{
-					Normal normalDistribution = new Normal(moLW3, skoLW3);
-					double part11 = Math.Round(normalDistribution.Sample(), 0);
-					if (part11 >= minLoad && part11 < maxLoad)
-					{
-						randValueLoadWinter.Add(part11);
-					}
-				}
-			}
-
-			return randValueLoadWinter;
-		}
-
 		/// <summary>
 		/// Работа алгоритма.
 		/// </summary>
@@ -264,9 +27,6 @@ namespace VKPwork
 			stopwatch.Start();
 
 			Console.WriteLine($"Работа алгоритма.\n");
-
-			// Генерация случайных величин
-			Random rand = new Random();
 
 			// Создание указателя на экземпляр RastrWin и его запуск
 			IRastr rastr = new Rastr();
@@ -313,44 +73,49 @@ namespace VKPwork
 			ICol nSech = (ICol)tableSechen.Cols.Item("ns");   // Номер сечения
 			ICol valueSech = (ICol)tableSechen.Cols.Item("psech");   // Полученное значение
 
-			// Лист для хранения перетока по КС
-			List<double> ksPeledSyxLog = new List<double>();
-			List<double> ksTaksimoMamakan = new List<double>();
+			// Создание экземпляра класса
+			SchemeNumber numberScheme = new SchemeNumber();
+			PowerLineBefore powerLineBefore = new PowerLineBefore();
+			PowerLineAfter powerLineAfter = new PowerLineAfter();
 
-			double numberYR = 0;
+			// Дельта снижения нагрузки
+			const double deltaLoad = 1;
 
-			// Цикл расчета в RastrWin3 (ЗИМА || ДО)
+			//// Листы (ЗИМА || ДО || ПУР)
+			List<double> ksPSLBeforeWinter1 = new List<double>();
+			List<double> ksTMBeforeWinter1 = new List<double>();
+			List<(int step, double newLoadWinterBefore)> listNewLoadWinterBefore1 = new List<(int, double)>();
+
+			double numberYRwinter1 = 0;
+
+			// Цикл расчета в RastrWin3
 			for (int i = 0; i < 59676; i++)
 			{
 				// Присвоение нового числа мощности генерации
 				var setSelAgr = "Num=" + 6;
 				tableGenYR.SetSel(setSelAgr);
 				var index1 = tableGenYR.FindNextSel[-1];
-				pGenYR.Z[index1] = RndValueGenWinter()[i];
+				pGenYR.Z[index1] = RandomValue.RndValueGenWinter()[i];
 
 				// Присвоение нового числа мощности нагрузки
 				var setSelNy = "ny=" + 5;
 				tableNode.SetSel(setSelNy);
 				var index2 = tableNode.FindNextSel[-1];
-				activeLoad.Z[index2] = RndValueLoadWinter()[i];
+				activeLoad.Z[index2] = RandomValue.RndValueLoadWinter()[i];
 
 				// Определение номера схемы
 				Random random = new Random();
 				int r = random.Next(1, 53);
 
-				// Создание экземпляра класса
-				SchemeNumber numberScheme = new SchemeNumber();
-				PowerLineAfter powerLineAfter = new PowerLineAfter();
-
-				// Состояние ветви
-				for (int  j = 0; j < numberScheme.numberAfter.Length; j++)
+				// Топология сети
+				for (int  j = 0; j < numberScheme.numberBefore.Length; j++)
 				{
-					if (numberScheme.numberAfter[j] == r)
+					if (numberScheme.numberBefore[j] == r)
 					{
-						int[][] workScheme = powerLineAfter.schemes[r - 1];
+						int[][] workScheme = powerLineBefore.schemes[r - 1];
 						foreach (int[] array in workScheme)
 						{
-							var setSelVetv = "ip=" + array[1] + "&" + "iq=" + array[2] + "&" + "np=" + array[3];
+							var setSelVetv = "ip=" + array[0] + "&" + "iq=" + array[1] + "&" + "np=" + array[2];
 							tableVetv.SetSel(setSelVetv);
 							var number = tableVetv.FindNextSel[-1];
 							staVetv.Z[number] = 1;
@@ -358,45 +123,644 @@ namespace VKPwork
 					}
 				}
 
+				// Определние МДП по топологии сети
+				double mdpWinterBeforePurTM = Excel.mdpTMpurBeforeWinter[r - 1];
+				double mdpWinterBeforePurPSL = Excel.mdpPSLpurBeforeWinter[r - 1];
+
 				// Расчет УР
 				_ = rastr.rgm("");
-				
-				// Величина снижения нагрузки при каждой итерации
-				int deltaLoad = 1;
+				numberYRwinter1++;
 
-				// КС Пеледуй - Сухой-Лог. Ограничения нагрузки
+				// КС Пеледуй - Сухой-Лог
 				var setSelNs1 = "ns=" + 1;
 				tableSechen.SetSel(setSelNs1);
-				var index7 = tableSechen.FindNextSel[-1];
+				var index3 = tableSechen.FindNextSel[-1];
+				var ksPSL = Math.Round(valueSech.Z[index3], 0);
+				ksPSLBeforeWinter1.Add(ksPSL);
 
-				ksPeledSyxLog.Add(Math.Round(valueSech.Z[index7], 0));
-
+				// КС Таксимо - Мамакан
 				var setSelNs2 = "ns=" + 2;
 				tableSechen.SetSel(setSelNs2);
-				var index8 = tableSechen.FindNextSel[-1];
-				ksTaksimoMamakan.Add(Math.Round(valueSech.Z[index8], 0));
+				var index4 = tableSechen.FindNextSel[-1];
+				var ksTM = Math.Round(valueSech.Z[index4], 0);
+				ksTMBeforeWinter1.Add(ksTM);
+
+				if (ksPSL > mdpWinterBeforePurPSL || ksTM > mdpWinterBeforePurPSL)
+				{
+					while (!(ksPSL <= mdpWinterBeforePurPSL && ksTM <= mdpWinterBeforePurPSL))
+					{
+						double newLoadWinterBefore1 = RandomValue.RndValueLoadWinter()[i] - deltaLoad;
+						if (newLoadWinterBefore1 == 0)
+						{
+							break;
+						}
+						else
+						{
+							activeLoad.Z[index2] = newLoadWinterBefore1;
+							_ = rastr.rgm("");
+							numberYRwinter1++;
+
+							listNewLoadWinterBefore1.Add((i, newLoadWinterBefore1));
+						}
+					}
+				}
 			}
 
-			// Файл Excel значений МДП
-			string xlsxMdpPeledSyxLog = @"C:\Users\Анастасия\Desktop\ПроизПрактика\Растр\KsPeledSyxLog.xlsx";
-			string xlsxMdpTaksimoMamakan = @"C:\Users\Анастасия\Desktop\ПроизПрактика\Растр\KsTaksimoMamakan.xlsx";
-			string xlsxPYRPeledSyxLog = @"C:\Users\Анастасия\Desktop\ПроизПрактика\Растр\PYRPeledSyxLog.xlsx";
-			string xlsxPYRTaksimoMamakan = @"C:\Users\Анастасия\Desktop\ПроизПрактика\Растр\PYRTaksimoMamakan.xlsx";
-			string xlsxPYRTaksimoMamakan1 = @"C:\Users\Анастасия\Desktop\ПроизПрактика\Растр\PYRTaksimoMamakan1.xlsx";
+			//// Листы (ЗИМА || ДО || СМЗУ)
+			List<double> ksPSLBeforeWinter2 = new List<double>();
+			List<double> ksTMBeforeWinter2 = new List<double>();
+			List<(int step, double newLoadWinterBefore)> listNewLoadWinterBefore2 = new List<(int, double)>();
 
-			// Чтение данных из файла Excel
-			List<double> mdpPeledSyxLog = Excel.ReadFileFromExcel(xlsxMdpPeledSyxLog);
-			List<double> mdpTaksimoMamakan = Excel.ReadFileFromExcel(xlsxMdpTaksimoMamakan);
-			List<double> pyrPeledSyxLog = Excel.ReadFileFromExcel(xlsxPYRPeledSyxLog);
-			List<double> pyrTaksimoMamakan = Excel.ReadFileFromExcel(xlsxPYRTaksimoMamakan);
-			List<double> pyrTaksimoMamakan1 = Excel.ReadFileFromExcel(xlsxPYRTaksimoMamakan1);
+			double numberYRwinter2 = 0;
 
-			// Определение разницы между КС и МДП
-			List<double> smzyPSL = ComparisonHelper.CompareLists(ksPeledSyxLog, mdpPeledSyxLog);
-			List<double> smzyTM = ComparisonHelper.CompareLists(ksTaksimoMamakan, mdpTaksimoMamakan);
-			List<double> pyrPSL = ComparisonHelper.CompareLists(ksPeledSyxLog, pyrPeledSyxLog);
-			List<double> pyrTM = ComparisonHelper.CompareLists(ksTaksimoMamakan, pyrTaksimoMamakan);
-			List<double> pyrTM1 = ComparisonHelper.CompareLists(ksTaksimoMamakan, pyrTaksimoMamakan1);
+			// Цикл расчета в RastrWin3
+			for (int i = 0; i < 59676; i++)
+			{
+				// Присвоение нового числа мощности генерации
+				var setSelAgr = "Num=" + 6;
+				tableGenYR.SetSel(setSelAgr);
+				var index1 = tableGenYR.FindNextSel[-1];
+				pGenYR.Z[index1] = RandomValue.RndValueGenWinter()[i];
+
+				// Присвоение нового числа мощности нагрузки
+				var setSelNy = "ny=" + 5;
+				tableNode.SetSel(setSelNy);
+				var index2 = tableNode.FindNextSel[-1];
+				activeLoad.Z[index2] = RandomValue.RndValueLoadWinter()[i];
+
+				// Определение номера схемы
+				Random random = new Random();
+				int r = random.Next(1, 53);
+
+				// Топология сети
+				for (int j = 0; j < numberScheme.numberBefore.Length; j++)
+				{
+					if (numberScheme.numberBefore[j] == r)
+					{
+						int[][] workScheme = powerLineBefore.schemes[r - 1];
+						foreach (int[] array in workScheme)
+						{
+							var setSelVetv = "ip=" + array[0] + "&" + "iq=" + array[1] + "&" + "np=" + array[2];
+							tableVetv.SetSel(setSelVetv);
+							var number = tableVetv.FindNextSel[-1];
+							staVetv.Z[number] = 1;
+						}
+					}
+				}
+
+				// Определние МДП по топологии сети
+				double mdpWinterBeforeSmzyTM = Excel.mdpTMsmzyBeforeWinter[r - 1];
+				double mdpWinterBeforeSmzyPSL = Excel.mdpPSLsmzyBeforeWinter[r - 1];
+
+				// Расчет УР
+				_ = rastr.rgm("");
+				numberYRwinter2++;
+
+				// КС Пеледуй - Сухой-Лог
+				var setSelNs1 = "ns=" + 1;
+				tableSechen.SetSel(setSelNs1);
+				var index3 = tableSechen.FindNextSel[-1];
+				var ksPSL = Math.Round(valueSech.Z[index3], 0);
+				ksPSLBeforeWinter2.Add(ksPSL);
+
+				// КС Таксимо - Мамакан
+				var setSelNs2 = "ns=" + 2;
+				tableSechen.SetSel(setSelNs2);
+				var index4 = tableSechen.FindNextSel[-1];
+				var ksTM = Math.Round(valueSech.Z[index4], 0);
+				ksTMBeforeWinter2.Add(ksTM);
+
+				if (ksPSL > mdpWinterBeforeSmzyPSL || ksTM > mdpWinterBeforeSmzyPSL)
+				{
+					while (!(ksPSL <= mdpWinterBeforeSmzyPSL && ksTM <= mdpWinterBeforeSmzyPSL))
+					{
+						double newLoadWinterBefore2 = RandomValue.RndValueLoadWinter()[i] - deltaLoad;
+						if (newLoadWinterBefore2 == 0)
+						{
+							break;
+						}
+						else
+						{
+							activeLoad.Z[index2] = newLoadWinterBefore2;
+							_ = rastr.rgm("");
+							numberYRwinter2++;
+
+							listNewLoadWinterBefore2.Add((i, newLoadWinterBefore2));
+						}
+					}
+				}
+			}
+
+			//// Листы (ЗИМА || ПОСЛЕ || ПУР)
+			List<double> ksPSLAfterWinter1 = new List<double>();
+			List<double> ksTMAfterWinter1 = new List<double>();
+			List<(int step, double newLoadWinterBefore)> listNewLoadWinterAfter1 = new List<(int, double)>();
+
+			double numberYRwinter3 = 0;
+
+			// Цикл расчета в RastrWin3
+			for (int i = 0; i < 59676; i++)
+			{
+				// Присвоение нового числа мощности генерации
+				var setSelAgr = "Num=" + 6;
+				tableGenYR.SetSel(setSelAgr);
+				var index1 = tableGenYR.FindNextSel[-1];
+				pGenYR.Z[index1] = RandomValue.RndValueGenWinter()[i];
+
+				// Присвоение нового числа мощности нагрузки
+				var setSelNy = "ny=" + 5;
+				tableNode.SetSel(setSelNy);
+				var index2 = tableNode.FindNextSel[-1];
+				activeLoad.Z[index2] = RandomValue.RndValueLoadWinter()[i];
+
+				// Определение номера схемы
+				Random random = new Random();
+				int r = random.Next(1, 72);
+
+				// Топология сети
+				for (int j = 0; j < numberScheme.numberAfter.Length; j++)
+				{
+					if (numberScheme.numberAfter[j] == r)
+					{
+						int[][] workScheme = powerLineAfter.schemes[r - 1];
+						foreach (int[] array in workScheme)
+						{
+							var setSelVetv = "ip=" + array[0] + "&" + "iq=" + array[1] + "&" + "np=" + array[2];
+							tableVetv.SetSel(setSelVetv);
+							var number = tableVetv.FindNextSel[-1];
+							staVetv.Z[number] = 1;
+						}
+					}
+				}
+
+				// Определние МДП по топологии сети
+				double mdpWinterAfterPurTM = Excel.mdpTMpurAfterWinter[r - 1];
+				double mdpWinterAfterPurPSL = Excel.mdpPSLpurAfterWinter[r - 1];
+
+				// Расчет УР
+				_ = rastr.rgm("");
+				numberYRwinter3++;
+
+				// КС Пеледуй - Сухой-Лог
+				var setSelNs1 = "ns=" + 1;
+				tableSechen.SetSel(setSelNs1);
+				var index3 = tableSechen.FindNextSel[-1];
+				var ksPSL = Math.Round(valueSech.Z[index3], 0);
+				ksPSLAfterWinter1.Add(ksPSL);
+
+				// КС Таксимо - Мамакан
+				var setSelNs2 = "ns=" + 2;
+				tableSechen.SetSel(setSelNs2);
+				var index4 = tableSechen.FindNextSel[-1];
+				var ksTM = Math.Round(valueSech.Z[index4], 0);
+				ksTMAfterWinter1.Add(ksTM);
+
+				if (ksPSL > mdpWinterAfterPurTM || ksTM > mdpWinterAfterPurPSL)
+				{
+					while (!(ksPSL <= mdpWinterAfterPurTM && ksTM <= mdpWinterAfterPurPSL))
+					{
+						double newLoadWinterAfter1 = RandomValue.RndValueLoadWinter()[i] - deltaLoad;
+						if (newLoadWinterAfter1 == 0)
+						{
+							break;
+						}
+						else
+						{
+							activeLoad.Z[index2] = newLoadWinterAfter1;
+							_ = rastr.rgm("");
+							numberYRwinter3++;
+
+							listNewLoadWinterAfter1.Add((i, newLoadWinterAfter1));
+						}
+					}
+				}
+			}
+
+			//// Листы (ЗИМА || ПОСЛЕ || СМЗУ)
+			List<double> ksPSLAfterWinter2 = new List<double>();
+			List<double> ksTMAfterWinter2 = new List<double>();
+			List<(int step, double newLoadWinterBefore)> listNewLoadWinterAfter2 = new List<(int, double)>();
+
+			double numberYRwinter4 = 0;
+
+			// Цикл расчета в RastrWin3
+			for (int i = 0; i < 59676; i++)
+			{
+				// Присвоение нового числа мощности генерации
+				var setSelAgr = "Num=" + 6;
+				tableGenYR.SetSel(setSelAgr);
+				var index1 = tableGenYR.FindNextSel[-1];
+				pGenYR.Z[index1] = RandomValue.RndValueGenWinter()[i];
+
+				// Присвоение нового числа мощности нагрузки
+				var setSelNy = "ny=" + 5;
+				tableNode.SetSel(setSelNy);
+				var index2 = tableNode.FindNextSel[-1];
+				activeLoad.Z[index2] = RandomValue.RndValueLoadWinter()[i];
+
+				// Определение номера схемы
+				Random random = new Random();
+				int r = random.Next(1, 72);
+
+				// Топология сети
+				for (int j = 0; j < numberScheme.numberAfter.Length; j++)
+				{
+					if (numberScheme.numberAfter[j] == r)
+					{
+						int[][] workScheme = powerLineAfter.schemes[r - 1];
+						foreach (int[] array in workScheme)
+						{
+							var setSelVetv = "ip=" + array[0] + "&" + "iq=" + array[1] + "&" + "np=" + array[2];
+							tableVetv.SetSel(setSelVetv);
+							var number = tableVetv.FindNextSel[-1];
+							staVetv.Z[number] = 1;
+						}
+					}
+				}
+
+				// Определние МДП по топологии сети
+				double mdpWinterAfterSmzyTM = Excel.mdpTMsmzyAfterWinter[r - 1];
+				double mdpWinterAfterSmzyPSL = Excel.mdpPSLsmzyAfterWinter[r - 1];
+
+				// Расчет УР
+				_ = rastr.rgm("");
+				numberYRwinter4++;
+
+				// КС Пеледуй - Сухой-Лог
+				var setSelNs1 = "ns=" + 1;
+				tableSechen.SetSel(setSelNs1);
+				var index3 = tableSechen.FindNextSel[-1];
+				var ksPSL = Math.Round(valueSech.Z[index3], 0);
+				ksPSLAfterWinter2.Add(ksPSL);
+
+				// КС Таксимо - Мамакан
+				var setSelNs2 = "ns=" + 2;
+				tableSechen.SetSel(setSelNs2);
+				var index4 = tableSechen.FindNextSel[-1];
+				var ksTM = Math.Round(valueSech.Z[index4], 0);
+				ksTMAfterWinter2.Add(ksTM);
+
+				if (ksPSL > mdpWinterAfterSmzyTM || ksTM > mdpWinterAfterSmzyPSL)
+				{
+					while (!(ksPSL <= mdpWinterAfterSmzyTM && ksTM <= mdpWinterAfterSmzyPSL))
+					{
+						double newLoadWinterAfter2 = RandomValue.RndValueLoadWinter()[i] - deltaLoad;
+						if (newLoadWinterAfter2 == 0)
+						{
+							break;
+						}
+						else
+						{
+							activeLoad.Z[index2] = newLoadWinterAfter2;
+							_ = rastr.rgm("");
+							numberYRwinter4++;
+
+							listNewLoadWinterAfter2.Add((i, newLoadWinterAfter2));
+						}
+					}
+				}
+			}
+
+			//// Листы (ЛЕТО || ДО || ПУР)
+			List<double> ksPSLBeforeSummer1 = new List<double>();
+			List<double> ksTMBeforeSummer1 = new List<double>();
+			List<(int step, double newLoadWinterBefore)> listNewLoadSummerBefore1 = new List<(int, double)>();
+
+			double numberYRsummer1 = 0;
+
+			// Цикл расчета в RastrWin3
+			for (int i = 0; i < 45733; i++)
+			{
+				// Присвоение нового числа мощности генерации
+				var setSelAgr = "Num=" + 6;
+				tableGenYR.SetSel(setSelAgr);
+				var index1 = tableGenYR.FindNextSel[-1];
+				pGenYR.Z[index1] = RandomValue.RndValueGenSummer()[i];
+
+				// Присвоение нового числа мощности нагрузки
+				var setSelNy = "ny=" + 5;
+				tableNode.SetSel(setSelNy);
+				var index2 = tableNode.FindNextSel[-1];
+				activeLoad.Z[index2] = RandomValue.RndValueLoadSummer()[i];
+
+				// Определение номера схемы
+				Random random = new Random();
+				int r = random.Next(1, 53);
+
+				// Топология сети
+				for (int j = 0; j < numberScheme.numberBefore.Length; j++)
+				{
+					if (numberScheme.numberBefore[j] == r)
+					{
+						int[][] workScheme = powerLineBefore.schemes[r - 1];
+						foreach (int[] array in workScheme)
+						{
+							var setSelVetv = "ip=" + array[0] + "&" + "iq=" + array[1] + "&" + "np=" + array[2];
+							tableVetv.SetSel(setSelVetv);
+							var number = tableVetv.FindNextSel[-1];
+							staVetv.Z[number] = 1;
+						}
+					}
+				}
+
+				// Определние МДП по топологии сети
+				double mdpSummerBeforePurTM = Excel.mdpTMpurBeforeSummer[r - 1];
+				double mdpSummerBeforePurPSL = Excel.mdpPSLpurBeforeSummer[r - 1];
+
+				// Расчет УР
+				_ = rastr.rgm("");
+				numberYRsummer1++;
+
+				// КС Пеледуй - Сухой-Лог
+				var setSelNs1 = "ns=" + 1;
+				tableSechen.SetSel(setSelNs1);
+				var index3 = tableSechen.FindNextSel[-1];
+				var ksPSL = Math.Round(valueSech.Z[index3], 0);
+				ksPSLBeforeSummer1.Add(ksPSL);
+
+				// КС Таксимо - Мамакан
+				var setSelNs2 = "ns=" + 2;
+				tableSechen.SetSel(setSelNs2);
+				var index4 = tableSechen.FindNextSel[-1];
+				var ksTM = Math.Round(valueSech.Z[index4], 0);
+				ksTMBeforeSummer1.Add(ksTM);
+
+				if (ksPSL > mdpSummerBeforePurTM || ksTM > mdpSummerBeforePurPSL)
+				{
+					while (!(ksPSL <= mdpSummerBeforePurTM && ksTM <= mdpSummerBeforePurPSL))
+					{
+						double newLoadSummerBefore1 = RandomValue.RndValueLoadSummer()[i] - deltaLoad;
+						if (newLoadSummerBefore1 == 0)
+						{
+							break;
+						}
+						else
+						{
+							activeLoad.Z[index2] = newLoadSummerBefore1;
+							_ = rastr.rgm("");
+							numberYRsummer1++;
+
+							listNewLoadSummerBefore1.Add((i, newLoadSummerBefore1));
+						}
+					}
+				}
+			}
+
+			//// Листы (ЛЕТО || ДО || СМЗУ)
+			List<double> ksPSLBeforeSummer2 = new List<double>();
+			List<double> ksTMBeforeSummer2 = new List<double>();
+			List<(int step, double newLoadWinterBefore)> listNewLoadSummerBefore2 = new List<(int, double)>();
+
+			double numberYRsummer2 = 0;
+
+			// Цикл расчета в RastrWin3
+			for (int i = 0; i < 45733; i++)
+			{
+				// Присвоение нового числа мощности генерации
+				var setSelAgr = "Num=" + 6;
+				tableGenYR.SetSel(setSelAgr);
+				var index1 = tableGenYR.FindNextSel[-1];
+				pGenYR.Z[index1] = RandomValue.RndValueGenSummer()[i];
+
+				// Присвоение нового числа мощности нагрузки
+				var setSelNy = "ny=" + 5;
+				tableNode.SetSel(setSelNy);
+				var index2 = tableNode.FindNextSel[-1];
+				activeLoad.Z[index2] = RandomValue.RndValueLoadSummer()[i];
+
+				// Определение номера схемы
+				Random random = new Random();
+				int r = random.Next(1, 53);
+
+				// Топология сети
+				for (int j = 0; j < numberScheme.numberBefore.Length; j++)
+				{
+					if (numberScheme.numberBefore[j] == r)
+					{
+						int[][] workScheme = powerLineBefore.schemes[r - 1];
+						foreach (int[] array in workScheme)
+						{
+							var setSelVetv = "ip=" + array[0] + "&" + "iq=" + array[1] + "&" + "np=" + array[2];
+							tableVetv.SetSel(setSelVetv);
+							var number = tableVetv.FindNextSel[-1];
+							staVetv.Z[number] = 1;
+						}
+					}
+				}
+
+				// Определние МДП по топологии сети
+				double mdpSummerBeforeSmzyTM = Excel.mdpTMsmzyBeforeSummer[r - 1];
+				double mdpSummerBeforeSmzyPSL = Excel.mdpPSLsmzyBeforeSummer[r - 1];
+
+				// Расчет УР
+				_ = rastr.rgm("");
+				numberYRsummer2++;
+
+				// КС Пеледуй - Сухой-Лог
+				var setSelNs1 = "ns=" + 1;
+				tableSechen.SetSel(setSelNs1);
+				var index3 = tableSechen.FindNextSel[-1];
+				var ksPSL = Math.Round(valueSech.Z[index3], 0);
+				ksPSLBeforeSummer2.Add(ksPSL);
+
+				// КС Таксимо - Мамакан
+				var setSelNs2 = "ns=" + 2;
+				tableSechen.SetSel(setSelNs2);
+				var index4 = tableSechen.FindNextSel[-1];
+				var ksTM = Math.Round(valueSech.Z[index4], 0);
+				ksTMBeforeSummer2.Add(ksTM);
+
+				if (ksPSL > mdpSummerBeforeSmzyTM || ksTM > mdpSummerBeforeSmzyPSL)
+				{
+					while (!(ksPSL <= mdpSummerBeforeSmzyTM && ksTM <= mdpSummerBeforeSmzyPSL))
+					{
+						double newLoadSummerBefore2 = RandomValue.RndValueLoadSummer()[i] - deltaLoad;
+						if (newLoadSummerBefore2 == 0)
+						{
+							break;
+						}
+						else
+						{
+							activeLoad.Z[index2] = newLoadSummerBefore2;
+							_ = rastr.rgm("");
+							numberYRsummer2++;
+
+							listNewLoadSummerBefore2.Add((i, newLoadSummerBefore2));
+						}
+					}
+				}
+			}
+
+			//// Листы (ЛЕТО || ПОСЛЕ || ПУР)
+			List<double> ksPSLAfterSummer1 = new List<double>();
+			List<double> ksTMAfterSummer1 = new List<double>();
+			List<(int step, double newLoadWinterBefore)> listNewLoadSummerAfter1 = new List<(int, double)>();
+
+			double numberYRsummer3 = 0;
+
+			// Цикл расчета в RastrWin3
+			for (int i = 0; i < 45733; i++)
+			{
+				// Присвоение нового числа мощности генерации
+				var setSelAgr = "Num=" + 6;
+				tableGenYR.SetSel(setSelAgr);
+				var index1 = tableGenYR.FindNextSel[-1];
+				pGenYR.Z[index1] = RandomValue.RndValueGenSummer()[i];
+
+				// Присвоение нового числа мощности нагрузки
+				var setSelNy = "ny=" + 5;
+				tableNode.SetSel(setSelNy);
+				var index2 = tableNode.FindNextSel[-1];
+				activeLoad.Z[index2] = RandomValue.RndValueLoadSummer()[i];
+
+				// Определение номера схемы
+				Random random = new Random();
+				int r = random.Next(1, 72);
+
+				// Топология сети
+				for (int j = 0; j < numberScheme.numberAfter.Length; j++)
+				{
+					if (numberScheme.numberAfter[j] == r)
+					{
+						int[][] workScheme = powerLineAfter.schemes[r - 1];
+						foreach (int[] array in workScheme)
+						{
+							var setSelVetv = "ip=" + array[0] + "&" + "iq=" + array[1] + "&" + "np=" + array[2];
+							tableVetv.SetSel(setSelVetv);
+							var number = tableVetv.FindNextSel[-1];
+							staVetv.Z[number] = 1;
+						}
+					}
+				}
+
+				// Определние МДП по топологии сети
+				double mdpSummerAfterPurTM = Excel.mdpTMpurAfterSummer[r - 1];
+				double mdpSummerAfterPurPSL = Excel.mdpPSLpurAfterSummer[r - 1];
+
+				// Расчет УР
+				_ = rastr.rgm("");
+				numberYRsummer3++;
+
+				// КС Пеледуй - Сухой-Лог
+				var setSelNs1 = "ns=" + 1;
+				tableSechen.SetSel(setSelNs1);
+				var index3 = tableSechen.FindNextSel[-1];
+				var ksPSL = Math.Round(valueSech.Z[index3], 0);
+				ksPSLAfterSummer1.Add(ksPSL);
+
+				// КС Таксимо - Мамакан
+				var setSelNs2 = "ns=" + 2;
+				tableSechen.SetSel(setSelNs2);
+				var index4 = tableSechen.FindNextSel[-1];
+				var ksTM = Math.Round(valueSech.Z[index4], 0);
+				ksTMAfterSummer1.Add(ksTM);
+
+				if (ksPSL > mdpSummerAfterPurTM || ksTM > mdpSummerAfterPurPSL)
+				{
+					while (!(ksPSL <= mdpSummerAfterPurTM && ksTM <= mdpSummerAfterPurPSL))
+					{
+						double newLoadSummerAfter1 = RandomValue.RndValueLoadSummer()[i] - deltaLoad;
+						if (newLoadSummerAfter1 == 0)
+						{
+							break;
+						}
+						else
+						{
+							activeLoad.Z[index2] = newLoadSummerAfter1;
+							_ = rastr.rgm("");
+							numberYRsummer3++;
+
+							listNewLoadSummerAfter1.Add((i, newLoadSummerAfter1));
+						}
+					}
+				}
+			}
+
+			//// Листы (ЛЕТО || ПОСЛЕ || СМЗУ)
+			List<double> ksPSLAfterSummer2 = new List<double>();
+			List<double> ksTMAfterSummer2 = new List<double>();
+			List<(int step, double newLoadWinterBefore)> listNewLoadSummerAfter2 = new List<(int, double)>();
+
+			double numberYRsummer4 = 0;
+
+			// Цикл расчета в RastrWin3
+			for (int i = 0; i < 45733; i++)
+			{
+				// Присвоение нового числа мощности генерации
+				var setSelAgr = "Num=" + 6;
+				tableGenYR.SetSel(setSelAgr);
+				var index1 = tableGenYR.FindNextSel[-1];
+				pGenYR.Z[index1] = RandomValue.RndValueGenSummer()[i];
+
+				// Присвоение нового числа мощности нагрузки
+				var setSelNy = "ny=" + 5;
+				tableNode.SetSel(setSelNy);
+				var index2 = tableNode.FindNextSel[-1];
+				activeLoad.Z[index2] = RandomValue.RndValueLoadSummer()[i];
+
+				// Определение номера схемы
+				Random random = new Random();
+				int r = random.Next(1, 72);
+
+				// Топология сети
+				for (int j = 0; j < numberScheme.numberAfter.Length; j++)
+				{
+					if (numberScheme.numberAfter[j] == r)
+					{
+						int[][] workScheme = powerLineAfter.schemes[r - 1];
+						foreach (int[] array in workScheme)
+						{
+							var setSelVetv = "ip=" + array[0] + "&" + "iq=" + array[1] + "&" + "np=" + array[2];
+							tableVetv.SetSel(setSelVetv);
+							var number = tableVetv.FindNextSel[-1];
+							staVetv.Z[number] = 1;
+						}
+					}
+				}
+
+				// Определние МДП по топологии сети
+				double mdpSummerAfterSmzyTM = Excel.mdpTMsmzyAfterSummer[r - 1];
+				double mdpSummerAfterSmzyPSL = Excel.mdpPSLsmzyAfterSummer[r - 1];
+
+				// Расчет УР
+				_ = rastr.rgm("");
+				numberYRsummer4++;
+
+				// КС Пеледуй - Сухой-Лог
+				var setSelNs1 = "ns=" + 1;
+				tableSechen.SetSel(setSelNs1);
+				var index3 = tableSechen.FindNextSel[-1];
+				var ksPSL = Math.Round(valueSech.Z[index3], 0);
+				ksPSLAfterSummer2.Add(ksPSL);
+
+				// КС Таксимо - Мамакан
+				var setSelNs2 = "ns=" + 2;
+				tableSechen.SetSel(setSelNs2);
+				var index4 = tableSechen.FindNextSel[-1];
+				var ksTM = Math.Round(valueSech.Z[index4], 0);
+				ksTMAfterSummer2.Add(ksTM);
+
+				if (ksPSL > mdpSummerAfterSmzyTM || ksTM > mdpSummerAfterSmzyPSL)
+				{
+					while (!(ksPSL <= mdpSummerAfterSmzyTM && ksTM <= mdpSummerAfterSmzyPSL))
+					{
+						double newLoadSummerAfter2 = RandomValue.RndValueLoadSummer()[i] - deltaLoad;
+						if (newLoadSummerAfter2 == 0)
+						{
+							break;
+						}
+						else
+						{
+							activeLoad.Z[index2] = newLoadSummerAfter2;
+							_ = rastr.rgm("");
+							numberYRsummer4++;
+
+							listNewLoadSummerAfter2.Add((i, newLoadSummerAfter2));
+						}
+					}
+				}
+			}
+
 
 			// Путь до файла Excel Результат
 			string folder = @"C:\Users\Анастасия\Desktop\ПроизПрактика";
