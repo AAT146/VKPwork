@@ -26,19 +26,19 @@ namespace VKPwork
 			// Засекаем время начала операции
 			stopwatch.Start();
 
-			Console.WriteLine($"Работа алгоритма.\n");
+			Console.WriteLine($"Выполнение процесса.\n");
 
 			// Создание указателя на экземпляр RastrWin и его запуск
 			IRastr rastr = new Rastr();
 
 			// Загрузка файла
-			string fileRegim = @"C:\Users\aat146\Desktop\NewWork\Растр.rg2";
-			string shablonRegim = @"C:\Users\aat146\Documents\RastrWin3\SHABLON\режим.rg2";
+			string fileRegim = @"C:\Users\Анастасия\Desktop\NewWork\Растр\Режим.rg2";
+			string shablonRegim = @"C:\Users\Анастасия\Documents\RastrWin3\SHABLON\режим.rg2";
 
 			rastr.Load(RG_KOD.RG_REPL, fileRegim, shablonRegim);
 
-			string fileSechen = @"C:\Users\Анастасия\Desktop\ПроизПрактика\Растр\Сечения.sch";
-			string shablonSechen = @"C:\Users\aat146\Documents\RastrWin3\SHABLON\сечения.sch";
+			string fileSechen = @"C:\Users\Анастасия\Desktop\NewWork\Растр\Режим.sch";
+			string shablonSechen = @"C:\Users\Анастасия\Documents\RastrWin3\SHABLON\сечения.sch";
 
 			rastr.Load(RG_KOD.RG_REPL, fileSechen, shablonSechen);
 
@@ -79,20 +79,21 @@ namespace VKPwork
 			PowerLineAfter powerLineAfter = new PowerLineAfter();
 
 			// Дельта снижения нагрузки
-			const double deltaLoad = 1;
+			double deltaLoad = 10;
 
 			//// Листы (ЗИМА || ДО || ПУР)
 			List<double> ksPSLBeforeWinter1 = new List<double>();
 			List<double> ksTMBeforeWinter1 = new List<double>();
 			List<(int step, double newLoadWinterBefore)> listNewLoadWinterBefore1 = new List<(int, double)>();
+			List<int> nScheme1 = new List<int>();
 
 			double numberYRwinter1 = 0;
 
 			// Цикл расчета в RastrWin3
-			for (int i = 0; i < 59676; i++)
+			for (int i = 0; i < 2; i++)
 			{
 				// Присвоение нового числа мощности генерации
-				var setSelAgr = "Num=" + 6;
+				var setSelAgr = "Num=" + 2;
 				tableGenYR.SetSel(setSelAgr);
 				var index1 = tableGenYR.FindNextSel[-1];
 				pGenYR.Z[index1] = RandomValue.RndValueGenWinter()[i];
@@ -106,6 +107,7 @@ namespace VKPwork
 				// Определение номера схемы
 				Random random = new Random();
 				int r = random.Next(1, 53);
+				nScheme1.Add(r);
 
 				// Топология сети
 				for (int  j = 0; j < numberScheme.numberBefore.Length; j++)
@@ -170,14 +172,15 @@ namespace VKPwork
 			List<double> ksPSLBeforeWinter2 = new List<double>();
 			List<double> ksTMBeforeWinter2 = new List<double>();
 			List<(int step, double newLoadWinterBefore)> listNewLoadWinterBefore2 = new List<(int, double)>();
+			List<int> nScheme2 = new List<int>();
 
 			double numberYRwinter2 = 0;
 
 			// Цикл расчета в RastrWin3
-			for (int i = 0; i < 59676; i++)
+			for (int i = 0; i < 2; i++)
 			{
 				// Присвоение нового числа мощности генерации
-				var setSelAgr = "Num=" + 6;
+				var setSelAgr = "Num=" + 2;
 				tableGenYR.SetSel(setSelAgr);
 				var index1 = tableGenYR.FindNextSel[-1];
 				pGenYR.Z[index1] = RandomValue.RndValueGenWinter()[i];
@@ -191,6 +194,7 @@ namespace VKPwork
 				// Определение номера схемы
 				Random random = new Random();
 				int r = random.Next(1, 53);
+				nScheme2.Add(r);
 
 				// Топология сети
 				for (int j = 0; j < numberScheme.numberBefore.Length; j++)
@@ -255,14 +259,15 @@ namespace VKPwork
 			List<double> ksPSLAfterWinter1 = new List<double>();
 			List<double> ksTMAfterWinter1 = new List<double>();
 			List<(int step, double newLoadWinterBefore)> listNewLoadWinterAfter1 = new List<(int, double)>();
+			List<int> nScheme3 = new List<int>();
 
 			double numberYRwinter3 = 0;
 
 			// Цикл расчета в RastrWin3
-			for (int i = 0; i < 59676; i++)
+			for (int i = 0; i < 2; i++)
 			{
 				// Присвоение нового числа мощности генерации
-				var setSelAgr = "Num=" + 6;
+				var setSelAgr = "Num=" + 2;
 				tableGenYR.SetSel(setSelAgr);
 				var index1 = tableGenYR.FindNextSel[-1];
 				pGenYR.Z[index1] = RandomValue.RndValueGenWinter()[i];
@@ -276,6 +281,7 @@ namespace VKPwork
 				// Определение номера схемы
 				Random random = new Random();
 				int r = random.Next(1, 72);
+				nScheme3.Add(r);
 
 				// Топология сети
 				for (int j = 0; j < numberScheme.numberAfter.Length; j++)
@@ -340,14 +346,15 @@ namespace VKPwork
 			List<double> ksPSLAfterWinter2 = new List<double>();
 			List<double> ksTMAfterWinter2 = new List<double>();
 			List<(int step, double newLoadWinterBefore)> listNewLoadWinterAfter2 = new List<(int, double)>();
+			List<int> nScheme4 = new List<int>();
 
 			double numberYRwinter4 = 0;
 
 			// Цикл расчета в RastrWin3
-			for (int i = 0; i < 59676; i++)
+			for (int i = 0; i < 2; i++)
 			{
 				// Присвоение нового числа мощности генерации
-				var setSelAgr = "Num=" + 6;
+				var setSelAgr = "Num=" + 2;
 				tableGenYR.SetSel(setSelAgr);
 				var index1 = tableGenYR.FindNextSel[-1];
 				pGenYR.Z[index1] = RandomValue.RndValueGenWinter()[i];
@@ -361,6 +368,7 @@ namespace VKPwork
 				// Определение номера схемы
 				Random random = new Random();
 				int r = random.Next(1, 72);
+				nScheme4.Add(r);
 
 				// Топология сети
 				for (int j = 0; j < numberScheme.numberAfter.Length; j++)
@@ -425,14 +433,15 @@ namespace VKPwork
 			List<double> ksPSLBeforeSummer1 = new List<double>();
 			List<double> ksTMBeforeSummer1 = new List<double>();
 			List<(int step, double newLoadWinterBefore)> listNewLoadSummerBefore1 = new List<(int, double)>();
+			List<int> nScheme5 = new List<int>();
 
 			double numberYRsummer1 = 0;
 
 			// Цикл расчета в RastrWin3
-			for (int i = 0; i < 45733; i++)
+			for (int i = 0; i < 2; i++)
 			{
 				// Присвоение нового числа мощности генерации
-				var setSelAgr = "Num=" + 6;
+				var setSelAgr = "Num=" + 2;
 				tableGenYR.SetSel(setSelAgr);
 				var index1 = tableGenYR.FindNextSel[-1];
 				pGenYR.Z[index1] = RandomValue.RndValueGenSummer()[i];
@@ -446,6 +455,7 @@ namespace VKPwork
 				// Определение номера схемы
 				Random random = new Random();
 				int r = random.Next(1, 53);
+				nScheme5.Add(r);
 
 				// Топология сети
 				for (int j = 0; j < numberScheme.numberBefore.Length; j++)
@@ -510,14 +520,15 @@ namespace VKPwork
 			List<double> ksPSLBeforeSummer2 = new List<double>();
 			List<double> ksTMBeforeSummer2 = new List<double>();
 			List<(int step, double newLoadWinterBefore)> listNewLoadSummerBefore2 = new List<(int, double)>();
+			List<int> nScheme6 = new List<int>();
 
 			double numberYRsummer2 = 0;
 
 			// Цикл расчета в RastrWin3
-			for (int i = 0; i < 45733; i++)
+			for (int i = 0; i < 2; i++)
 			{
 				// Присвоение нового числа мощности генерации
-				var setSelAgr = "Num=" + 6;
+				var setSelAgr = "Num=" + 2;
 				tableGenYR.SetSel(setSelAgr);
 				var index1 = tableGenYR.FindNextSel[-1];
 				pGenYR.Z[index1] = RandomValue.RndValueGenSummer()[i];
@@ -531,6 +542,7 @@ namespace VKPwork
 				// Определение номера схемы
 				Random random = new Random();
 				int r = random.Next(1, 53);
+				nScheme6.Add(r);
 
 				// Топология сети
 				for (int j = 0; j < numberScheme.numberBefore.Length; j++)
@@ -595,14 +607,15 @@ namespace VKPwork
 			List<double> ksPSLAfterSummer1 = new List<double>();
 			List<double> ksTMAfterSummer1 = new List<double>();
 			List<(int step, double newLoadWinterBefore)> listNewLoadSummerAfter1 = new List<(int, double)>();
+			List<int> nScheme7 = new List<int>();
 
 			double numberYRsummer3 = 0;
 
 			// Цикл расчета в RastrWin3
-			for (int i = 0; i < 45733; i++)
+			for (int i = 0; i < 2; i++)
 			{
 				// Присвоение нового числа мощности генерации
-				var setSelAgr = "Num=" + 6;
+				var setSelAgr = "Num=" + 2;
 				tableGenYR.SetSel(setSelAgr);
 				var index1 = tableGenYR.FindNextSel[-1];
 				pGenYR.Z[index1] = RandomValue.RndValueGenSummer()[i];
@@ -616,6 +629,7 @@ namespace VKPwork
 				// Определение номера схемы
 				Random random = new Random();
 				int r = random.Next(1, 72);
+				nScheme7.Add(r);
 
 				// Топология сети
 				for (int j = 0; j < numberScheme.numberAfter.Length; j++)
@@ -680,14 +694,15 @@ namespace VKPwork
 			List<double> ksPSLAfterSummer2 = new List<double>();
 			List<double> ksTMAfterSummer2 = new List<double>();
 			List<(int step, double newLoadWinterBefore)> listNewLoadSummerAfter2 = new List<(int, double)>();
+			List<int> nScheme8 = new List<int>();
 
 			double numberYRsummer4 = 0;
 
 			// Цикл расчета в RastrWin3
-			for (int i = 0; i < 45733; i++)
+			for (int i = 0; i < 2; i++)
 			{
 				// Присвоение нового числа мощности генерации
-				var setSelAgr = "Num=" + 6;
+				var setSelAgr = "Num=" + 2;
 				tableGenYR.SetSel(setSelAgr);
 				var index1 = tableGenYR.FindNextSel[-1];
 				pGenYR.Z[index1] = RandomValue.RndValueGenSummer()[i];
@@ -701,6 +716,7 @@ namespace VKPwork
 				// Определение номера схемы
 				Random random = new Random();
 				int r = random.Next(1, 72);
+				nScheme8.Add(r);
 
 				// Топология сети
 				for (int j = 0; j < numberScheme.numberAfter.Length; j++)
@@ -761,95 +777,272 @@ namespace VKPwork
 				}
 			}
 
+			// Путь до файла Excel
+			string folder = @"C:\Users\Анастасия\Desktop\NewWork";
+			string fileExcel1 = "Зима.xlsx";
+			string xlsxFile1 = Path.Combine(folder, fileExcel1);
+			string fileExcel2 = "Лето.xlsx";
+			string xlsxFile2 = Path.Combine(folder, fileExcel2);
 
-			// Путь до файла Excel Результат
-			string folder = @"C:\Users\Анастасия\Desktop\ПроизПрактика";
-			string fileExcel = "Результат.xlsx";
-			string xlsxFile = Path.Combine(folder, fileExcel);
+			// Создание книги и листа для файла ЗИМА
+			Application excelApp1 = new Application();
+			Workbook workbook1 = excelApp1.Workbooks.Add();
+			Worksheet worksheet1 = workbook1.Sheets.Add();
+			worksheet1.Name = "ДО_ПУР";
+			Worksheet worksheet2 = workbook1.Sheets.Add();
+			worksheet2.Name = "ДО_СМЗУ";
+			Worksheet worksheet3 = workbook1.Sheets.Add();
+			worksheet3.Name = "ПОСЛЕ_ПУР";
+			Worksheet worksheet4 = workbook1.Sheets.Add();
+			worksheet4.Name = "ПОСЛЕ_СМЗУ";
 
-			// Создание книги и листа
-			Application excelApp = new Application();
-			Workbook workbook = excelApp.Workbooks.Add();
-			Worksheet worksheet1 = workbook.Sheets.Add();
-			worksheet1.Name = "Случайные величины";
-			Worksheet worksheet2 = workbook.Sheets.Add();
-			worksheet2.Name = "Логическая операция";
-			Worksheet worksheet3 = workbook.Sheets.Add();
-			worksheet3.Name = "Состояние линий";
-
-			// Запись значений в файл Excel
-			for (int i = 0; i < 105409; i++)
+			// Запись значений в файл Excel ЗИМА
+			for (int i = 0; i < 2; i++)
 			{
 				// Получаем диапазон ячеек начиная с ячейки A1
 				Range range1 = worksheet1.Range["A1"];
 				Range range2 = worksheet2.Range["A1"];
 				Range range3 = worksheet3.Range["A1"];
+				Range range4 = worksheet4.Range["A1"];
 
 				// Запись случайной величины в столбец А листа 1 - генерация
 				range1.Offset[0, 0].Value = "Генерация";
-				range1.Offset[i + 1, 0].Value = randValueGen[i];
+				range1.Offset[i + 1, 0].Value = RandomValue.RndValueGenWinter()[i];
 
 				// Запись случайной величины в столбец B листа 1 - нагрузка
 				range1.Offset[0, 1].Value = "Нагрузка";
-				range1.Offset[i + 1, 1].Value = randValueLoad[i];
+				range1.Offset[i + 1, 1].Value = RandomValue.RndValueLoadWinter()[i];
 
 				// Запись случайной величины в столбец C листа 1 - КС Пеледуй - Сухой Лог
 				range1.Offset[0, 2].Value = "КС Пеледуй - Сухой Лог";
-				range1.Offset[i + 1, 2].Value = ksPeledSyxLog[i];
+				range1.Offset[i + 1, 2].Value = ksPSLBeforeWinter1[i];
 
 				// Запись случайной величины в столбец D листа 1 - КС Таксимо - Мамакан
 				range1.Offset[0, 3].Value = "КС Таксимо - Мамакан";
-				range1.Offset[i + 1, 3].Value = ksTaksimoMamakan[i];
+				range1.Offset[i + 1, 3].Value = ksTMBeforeWinter1[i];
 
-				// Запись логической операции в столбец A листа 2 - СМЗУ КС_МДП (Пеледуй - Сухой Лог)
-				range2.Offset[0, 0].Value = "СМЗУ КС_МДП (П-СЛ)";
-				range2.Offset[i + 1, 0].Value = smzyPSL[i];
+				// Запись Номера схемы сети
+				range1.Offset[0, 4].Value = "№ Схемы";
+				range1.Offset[i + 1, 4].Value = nScheme1[i];
 
-				// Запись логической операции в столбец B листа 2 - СМЗУ КС_МДП (Таксимо - Мамакан)
-				range2.Offset[0, 1].Value = "СМЗУ КС_МДП (Т-М)";
-				range2.Offset[i + 1, 1].Value = smzyTM[i];
+				// Запись шага итерации, на котором проищошло превышение 
+				range1.Offset[0, 5].Value = "";
+				range1.Offset[i + 1, 5].Value = listNewLoadWinterBefore1[i];
 
-				// Запись логической операции в столбец C листа 2 - ПУР КС_МДП (Пеледуй - Сухой Лог)
-				range2.Offset[0, 2].Value = "ПУР КС_МДП (П-СЛ)";
-				range2.Offset[i + 1, 2].Value = pyrPSL[i];
+				// Запись случайной величины в столбец А листа 2 - генерация
+				range2.Offset[0, 0].Value = "Генерация";
+				range2.Offset[i + 1, 0].Value = RandomValue.RndValueGenWinter()[i];
 
-				// Запись логической операции в столбец D листа 2 - ПУР КС_МДП (Таксимо - Мамакан)
-				range2.Offset[0, 3].Value = "ПУР КС_МДП (Т-М)";
-				range2.Offset[i + 1, 3].Value = pyrTM[i];
+				// Запись случайной величины в столбец B листа 2 - нагрузка
+				range2.Offset[0, 1].Value = "Нагрузка";
+				range2.Offset[i + 1, 1].Value = RandomValue.RndValueLoadWinter()[i];
 
-				// Запись логической операции в столбец E листа 2 - ПУР1 КС_МДП (Таксимо - Мамакан)
-				range2.Offset[0, 4].Value = "ПУР1 КС_МДП (Т-М)";
-				range2.Offset[i + 1, 4].Value = pyrTM1[i];
+				// Запись случайной величины в столбец C листа 1 - КС Пеледуй - Сухой Лог
+				range2.Offset[0, 2].Value = "КС Пеледуй - Сухой Лог";
+				range2.Offset[i + 1, 2].Value = ksPSLBeforeWinter2[i];
 
-				// Запись состояния линии в столбец А листа 3 - №1 П-СХ
-				range3.Offset[0, 0].Value = "№1 П-СХ";
-				range3.Offset[i + 1, 0].Value = randSostPeledSyxLog1[i];
+				// Запись случайной величины в столбец D листа 1 - КС Таксимо - Мамакан
+				range2.Offset[0, 3].Value = "КС Таксимо - Мамакан";
+				range2.Offset[i + 1, 3].Value = ksTMBeforeWinter2[i];
 
-				// Запись состояния линии в столбец B листа 3 - №2 П-СХ
-				range3.Offset[0, 1].Value = "№2 П-СХ";
-				range3.Offset[i + 1, 1].Value = randSostPeledSyxLog2[i];
+				// Запись Номера схемы сети
+				range2.Offset[0, 4].Value = "№ Схемы";
+				range2.Offset[i + 1, 4].Value = nScheme2[i];
 
-				// Запись состояния линии в столбец C листа 3 - №1 Т-М
-				range3.Offset[0, 2].Value = "№1 Т-М";
-				range3.Offset[i + 1, 2].Value = randSostTaksimoMamakan1[i];
+				// Запись шага итерации, на котором проищошло превышение 
+				range2.Offset[0, 5].Value = "";
+				range2.Offset[i + 1, 5].Value = listNewLoadWinterBefore2[i];
 
-				// Запись состояния линии в столбец D листа 3 - №2 Т-М
-				range3.Offset[0, 3].Value = "№2 Т-М";
-				range3.Offset[i + 1, 3].Value = randSostTaksimoMamakan2[i];
+				// Запись случайной величины в столбец А листа 3 - генерация
+				range3.Offset[0, 0].Value = "Генерация";
+				range3.Offset[i + 1, 0].Value = RandomValue.RndValueGenWinter()[i];
+
+				// Запись случайной величины в столбец B листа 3 - нагрузка
+				range3.Offset[0, 1].Value = "Нагрузка";
+				range3.Offset[i + 1, 1].Value = RandomValue.RndValueLoadWinter()[i];
+
+				// Запись случайной величины в столбец C листа 3 - КС Пеледуй - Сухой Лог
+				range3.Offset[0, 2].Value = "КС Пеледуй - Сухой Лог";
+				range3.Offset[i + 1, 2].Value = ksPSLAfterWinter1[i];
+
+				// Запись случайной величины в столбец D листа 3 - КС Таксимо - Мамакан
+				range3.Offset[0, 3].Value = "КС Таксимо - Мамакан";
+				range3.Offset[i + 1, 3].Value = ksTMAfterWinter1[i];
+
+				// Запись Номера схемы сети
+				range3.Offset[0, 4].Value = "№ Схемы";
+				range3.Offset[i + 1, 4].Value = nScheme3[i];
+
+				// Запись шага итерации, на котором проищошло превышение 
+				range3.Offset[0, 5].Value = "";
+				range3.Offset[i + 1, 5].Value = listNewLoadWinterAfter1[i];
+
+				// Запись случайной величины в столбец А листа 4 - генерация
+				range4.Offset[0, 0].Value = "Генерация";
+				range4.Offset[i + 1, 0].Value = RandomValue.RndValueGenWinter()[i];
+
+				// Запись случайной величины в столбец B листа 4 - нагрузка
+				range4.Offset[0, 1].Value = "Нагрузка";
+				range4.Offset[i + 1, 1].Value = RandomValue.RndValueLoadWinter()[i];
+
+				// Запись случайной величины в столбец C листа 4 - КС Пеледуй - Сухой Лог
+				range4.Offset[0, 2].Value = "КС Пеледуй - Сухой Лог";
+				range4.Offset[i + 1, 2].Value = ksPSLAfterWinter2[i];
+
+				// Запись случайной величины в столбец D листа 4 - КС Таксимо - Мамакан
+				range4.Offset[0, 3].Value = "КС Таксимо - Мамакан";
+				range4.Offset[i + 1, 3].Value = ksTMAfterWinter2[i];
+
+				// Запись Номера схемы сети
+				range4.Offset[0, 4].Value = "№ Схемы";
+				range4.Offset[i + 1, 4].Value = nScheme4[i];
+
+				// Запись шага итерации, на котором проищошло превышение 
+				range4.Offset[0, 5].Value = "";
+				range4.Offset[i + 1, 5].Value = listNewLoadWinterAfter2[i];
 			}
 
-			workbook.SaveAs(xlsxFile);
-			workbook.Close();
-			excelApp.Quit();
+			workbook1.SaveAs(xlsxFile1);
+			workbook1.Close();
+			excelApp1.Quit();
+
+			// Создание книги и листа для файла ЛЕТО
+			Application excelApp2 = new Application();
+			Workbook workbook2 = excelApp2.Workbooks.Add();
+			Worksheet worksheet5 = workbook2.Sheets.Add();
+			worksheet5.Name = "ДО_ПУР";
+			Worksheet worksheet6 = workbook2.Sheets.Add();
+			worksheet6.Name = "ДО_СМЗУ";
+			Worksheet worksheet7 = workbook2.Sheets.Add();
+			worksheet7.Name = "ПОСЛЕ_ПУР";
+			Worksheet worksheet8 = workbook2.Sheets.Add();
+			worksheet8.Name = "ПОСЛЕ_СМЗУ";
+
+			// Запись значений в файл Excel ЛЕТО
+			for (int i = 0; i < 2; i++)
+			{
+				// Получаем диапазон ячеек начиная с ячейки A1
+				Range range5 = worksheet5.Range["A1"];
+				Range range6 = worksheet6.Range["A1"];
+				Range range7 = worksheet7.Range["A1"];
+				Range range8 = worksheet8.Range["A1"];
+
+				// Запись случайной величины в столбец А листа 1 - генерация
+				range5.Offset[0, 0].Value = "Генерация";
+				range5.Offset[i + 1, 0].Value = RandomValue.RndValueGenSummer()[i];
+
+				// Запись случайной величины в столбец B листа 1 - нагрузка
+				range5.Offset[0, 1].Value = "Нагрузка";
+				range5.Offset[i + 1, 1].Value = RandomValue.RndValueLoadSummer()[i];
+
+				// Запись случайной величины в столбец C листа 1 - КС Пеледуй - Сухой Лог
+				range5.Offset[0, 2].Value = "КС Пеледуй - Сухой Лог";
+				range5.Offset[i + 1, 2].Value = ksPSLBeforeSummer1[i];
+
+				// Запись случайной величины в столбец D листа 1 - КС Таксимо - Мамакан
+				range5.Offset[0, 3].Value = "КС Таксимо - Мамакан";
+				range5.Offset[i + 1, 3].Value = ksTMBeforeSummer1[i];
+
+				// Запись Номера схемы сети
+				range5.Offset[0, 4].Value = "№ Схемы";
+				range5.Offset[i + 1, 4].Value = nScheme5[i];
+
+				// Запись шага итерации, на котором проищошло превышение 
+				range5.Offset[0, 5].Value = "";
+				range5.Offset[i + 1, 5].Value = listNewLoadSummerBefore1[i];
+
+				// Запись случайной величины в столбец А листа 2 - генерация
+				range6.Offset[0, 0].Value = "Генерация";
+				range6.Offset[i + 1, 0].Value = RandomValue.RndValueGenSummer()[i];
+
+				// Запись случайной величины в столбец B листа 2 - нагрузка
+				range6.Offset[0, 1].Value = "Нагрузка";
+				range6.Offset[i + 1, 1].Value = RandomValue.RndValueLoadSummer()[i];
+
+				// Запись случайной величины в столбец C листа 1 - КС Пеледуй - Сухой Лог
+				range6.Offset[0, 2].Value = "КС Пеледуй - Сухой Лог";
+				range6.Offset[i + 1, 2].Value = ksPSLBeforeSummer2[i];
+
+				// Запись случайной величины в столбец D листа 1 - КС Таксимо - Мамакан
+				range6.Offset[0, 3].Value = "КС Таксимо - Мамакан";
+				range6.Offset[i + 1, 3].Value = ksTMBeforeSummer2[i];
+
+				// Запись Номера схемы сети
+				range6.Offset[0, 4].Value = "№ Схемы";
+				range6.Offset[i + 1, 4].Value = nScheme6[i];
+
+				// Запись шага итерации, на котором проищошло превышение 
+				range6.Offset[0, 5].Value = "";
+				range6.Offset[i + 1, 5].Value = listNewLoadSummerBefore2[i];
+
+				// Запись случайной величины в столбец А листа 3 - генерация
+				range7.Offset[0, 0].Value = "Генерация";
+				range7.Offset[i + 1, 0].Value = RandomValue.RndValueGenSummer()[i];
+
+				// Запись случайной величины в столбец B листа 3 - нагрузка
+				range7.Offset[0, 1].Value = "Нагрузка";
+				range7.Offset[i + 1, 1].Value = RandomValue.RndValueLoadSummer()[i];
+
+				// Запись случайной величины в столбец C листа 3 - КС Пеледуй - Сухой Лог
+				range7.Offset[0, 2].Value = "КС Пеледуй - Сухой Лог";
+				range7.Offset[i + 1, 2].Value = ksPSLAfterSummer1[i];
+
+				// Запись случайной величины в столбец D листа 3 - КС Таксимо - Мамакан
+				range7.Offset[0, 3].Value = "КС Таксимо - Мамакан";
+				range7.Offset[i + 1, 3].Value = ksTMAfterSummer1[i];
+
+				// Запись Номера схемы сети
+				range7.Offset[0, 4].Value = "№ Схемы";
+				range7.Offset[i + 1, 4].Value = nScheme7[i];
+
+				// Запись шага итерации, на котором проищошло превышение 
+				range7.Offset[0, 5].Value = "";
+				range7.Offset[i + 1, 5].Value = listNewLoadSummerAfter1[i];
+
+				// Запись случайной величины в столбец А листа 4 - генерация
+				range8.Offset[0, 0].Value = "Генерация";
+				range8.Offset[i + 1, 0].Value = RandomValue.RndValueGenSummer()[i];
+
+				// Запись случайной величины в столбец B листа 4 - нагрузка
+				range8.Offset[0, 1].Value = "Нагрузка";
+				range8.Offset[i + 1, 1].Value = RandomValue.RndValueLoadSummer()[i];
+
+				// Запись случайной величины в столбец C листа 4 - КС Пеледуй - Сухой Лог
+				range8.Offset[0, 2].Value = "КС Пеледуй - Сухой Лог";
+				range8.Offset[i + 1, 2].Value = ksPSLAfterSummer2[i];
+
+				// Запись случайной величины в столбец D листа 4 - КС Таксимо - Мамакан
+				range8.Offset[0, 3].Value = "КС Таксимо - Мамакан";
+				range8.Offset[i + 1, 3].Value = ksTMAfterSummer2[i];
+
+				// Запись Номера схемы сети
+				range8.Offset[0, 4].Value = "№ Схемы";
+				range8.Offset[i + 1, 4].Value = nScheme8[i];
+
+				// Запись шага итерации, на котором проищошло превышение 
+				range8.Offset[0, 5].Value = "";
+				range8.Offset[i + 1, 5].Value = listNewLoadSummerAfter2[i];
+			}
 
 			// Останавливаем счетчик
 			stopwatch.Stop();
 
-			Console.WriteLine($"\nВремя расчета: {stopwatch.ElapsedMilliseconds} мс\n" +
-				$"Файл Excel успешно сохранен по пути: {xlsxFile}\n" +
-				$"Количество СВ генерации: {randValueGen.Count}\n" +
-				$"Количество СВ нагрузки: {randValueLoad.Count}\n" +
-				$"Количество просчитанных режимов: {numberYR}\n");
+			Console.WriteLine($"\nПроцесс завершен.\n" +
+				$"Время расчета: {stopwatch.ElapsedMilliseconds} мс.\n" +
+				$"Файл Excel 1 успешно сохранен по пути: {xlsxFile1}.\n" +
+				$"Файл Excel 2 успешно сохранен по пути: {xlsxFile2}.\n" +
+				$"Количество СВ генерации (зима): {RandomValue.RndValueGenWinter().Count}.\n" +
+				$"Количество СВ генерации (лето): {RandomValue.RndValueGenSummer().Count}.\n" +
+				$"Количество СВ нагрузки (зима): {RandomValue.RndValueLoadWinter().Count}.\n" +
+				$"Количество СВ нагрузки (лето): {RandomValue.RndValueLoadSummer().Count}.\n" +
+				$"Количество РУР (зима|до|пур): {numberYRwinter1}.\n" +
+				$"Количество РУР (зима|до|смзу): {numberYRwinter2}.\n" +
+				$"Количество РУР (зима|после|пур): {numberYRwinter3}.\n" +
+				$"Количество РУР (зима|после|смзу): {numberYRwinter4}.\n" +
+				$"Количество РУР (лето|до|пур): {numberYRsummer1}.\n" +
+				$"Количество РУР (лето|до|смзу): {numberYRsummer2}.\n" +
+				$"Количество РУР (лето|после|пур): {numberYRsummer3}.\n" +
+				$"Количество РУР (лето|после|смзу): {numberYRsummer4}.\n");
 
 			Console.ReadKey();
 

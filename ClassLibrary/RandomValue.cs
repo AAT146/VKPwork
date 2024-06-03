@@ -33,7 +33,7 @@ namespace ClassLibrary
 			List<double> randValueGenSummer = new List<double>();
 
 			// СВ генерация ЛЕТО
-			while (randValueGenSummer.Count < 45733)
+			while (randValueGenSummer.Count < 2)
 			{
 				double q = rand.NextDouble();
 
@@ -83,7 +83,7 @@ namespace ClassLibrary
 			List<double> randValueGenWinter = new List<double>();
 
 			//СВ генерация ЗИМА
-			while (randValueGenWinter.Count < 59676)
+			while (randValueGenWinter.Count < 2)
 			{
 				double q = rand.NextDouble();
 
@@ -145,7 +145,7 @@ namespace ClassLibrary
 			List<double> randValueLoadSummer = new List<double>();
 
 			// СВ нагрузка ЛЕТО
-			while (randValueLoadSummer.Count < 45733)
+			while (randValueLoadSummer.Count < 2)
 			{
 				double q = rand.NextDouble();
 				if (q > 0 && q <= ls1)
@@ -207,7 +207,7 @@ namespace ClassLibrary
 			List<double> randValueLoadWinter = new List<double>();
 
 			// СВ нагрузка ЗИМА
-			while (randValueLoadWinter.Count < 59676)
+			while (randValueLoadWinter.Count < 2)
 			{
 				double q = rand.NextDouble();
 				if (q > 0 && q <= lw1)
