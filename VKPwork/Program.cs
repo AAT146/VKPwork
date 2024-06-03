@@ -44,7 +44,239 @@ namespace VKPwork
 		}
 
 		/// <summary>
-		/// Упрощенное моделирование.
+		/// Метод: генерация СВ ГЭС (ЛЕТО)
+		/// </summary>
+		/// <returns>Список СВ по Ргэс(лето)</returns>
+		public static List<double> RndValueGenSummer()
+		{
+			// Константы для з.распр. генерации ГЭС - ЛЕТО
+			double gs1 = 0.85;
+			double skoGS1 = 3;
+			double moGS1 = 91;
+			double gs2 = 0.075;
+			double lowerS = 34;
+			double upperS = 83;
+			double minGen = 8;
+			double maxGen = 89;
+
+			// Генерация случайных величин (СВ)
+			Random rand = new Random();
+
+			// Лист для хранения СВ генерации
+			List<double> randValueGenSummer = new List<double>();
+
+			// СВ генерация ЛЕТО
+			while (randValueGenSummer.Count < 45733)
+			{
+				double q = rand.NextDouble();
+
+				if (q >= 0 && q <= gs1)
+				{
+					Normal normalDistribution = new Normal(moGS1, skoGS1);
+					double part1 = Math.Round(normalDistribution.Sample(), 0);
+					if (part1 >= minGen && part1 < maxGen)
+					{
+						randValueGenSummer.Add(part1);
+					}
+				}
+				else if (q > gs1 && q <= (gs1 + gs2))
+				{
+					ContinuousUniform uniformDist = new ContinuousUniform(lowerS, upperS);
+					double part2 = Math.Round(uniformDist.Sample(), 0);
+					randValueGenSummer.Add(part2);
+				}
+			}
+
+			return randValueGenSummer;
+		}
+
+		/// <summary>
+		/// Метод: генерация СВ ГЭС (ЗИМА)
+		/// </summary>
+		/// <returns>Список СВ по Ргэс(зима)</returns>
+		public static List<double> RndValueGenWinter()
+		{
+			// Константы з.распр. генерации ГЭС - ЗИМА
+			double gw1 = 0.13;
+			double skoGW1 = 3.2;
+			double moGW1 = 19;
+			double gw2 = 0.07;
+			double gw3 = 0.85;
+			double skoGW3 = 3.2;
+			double moGW3 = 14;
+			double lowerW = 26;
+			double upperW = 66;
+			double minGen = 8;
+			double maxGen = 89;
+
+			// Генерация случайных величин (СВ)
+			Random rand = new Random();
+
+			// Лист для хранения СВ генерации
+			List<double> randValueGenWinter = new List<double>();
+
+			//СВ генерация ЗИМА
+			while (randValueGenWinter.Count < 59676)
+			{
+				double q = rand.NextDouble();
+
+				if (q > 0 && q <= gw1)
+				{
+					Normal normalDistribution = new Normal(moGW1, skoGW1);
+					double part3 = Math.Round(normalDistribution.Sample(), 0);
+					if (part3 >= minGen && part3 < maxGen)
+					{
+						randValueGenWinter.Add(part3);
+					}
+				}
+				else if (q > gw1 && q <= (gw1 + gw2))
+				{
+					ContinuousUniform uniformDist = new ContinuousUniform(lowerW, upperW);
+					double part4 = Math.Round(uniformDist.Sample(), 0);
+					if (part4 >= minGen && part4 < maxGen)
+					{
+						randValueGenWinter.Add(part4);
+					}
+				}
+				else if (q > (gw1 + gw2) && q <= (gw1 + gw2 + gw3))
+				{
+					Normal normalDistribution = new Normal(moGW3, skoGW3);
+					double part5 = Math.Round(normalDistribution.Sample(), 0);
+					if (part5 >= minGen && part5 < maxGen)
+					{
+						randValueGenWinter.Add(part5);
+					}
+				}
+			}
+
+			return randValueGenWinter;
+		}
+
+		/// <summary>
+		/// Метод: генерация СВ Нагрузки (ЛЕТО)
+		/// </summary>
+		/// <returns>Список СВ по Рнагр(лето)</returns>
+		public static List<double> RndValueLoadSummer()
+		{
+			// Константы з.распр. нагрузки - ЛЕТО
+			double ls1 = 0.27;
+			double skoLS1 = 10;
+			double moLS1 = 101;
+			double ls2 = 0.50;
+			double skoLS2 = 6;
+			double moLS2 = 110;
+			double ls3 = 0.23;
+			double skoLS3 = 5.5;
+			double moLS3 = 125;
+			double minLoad = 10;
+			double maxLoad = 167;
+
+			// Генерация случайных величин (СВ)
+			Random rand = new Random();
+
+			// Лист для хранения СВ нагрузки
+			List<double> randValueLoadSummer = new List<double>();
+
+			// СВ нагрузка ЛЕТО
+			while (randValueLoadSummer.Count < 45733)
+			{
+				double q = rand.NextDouble();
+				if (q > 0 && q <= ls1)
+				{
+					Normal normalDistribution = new Normal(moLS1, skoLS1);
+					double part6 = Math.Round(normalDistribution.Sample(), 0);
+					if (part6 >= minLoad && part6 < maxLoad)
+					{
+						randValueLoadSummer.Add(part6);
+					}
+				}
+				else if (q > ls1 && q <= (ls1 + ls2))
+				{
+					Normal normalDistribution = new Normal(moLS2, skoLS2);
+					double part7 = Math.Round(normalDistribution.Sample(), 0);
+					if (part7 >= minLoad && part7 < maxLoad)
+					{
+						randValueLoadSummer.Add(part7);
+					}
+				}
+				else if (q > (ls1 + ls2) && q <= (ls1 + ls2 + ls3))
+				{
+					Normal normalDistribution = new Normal(moLS3, skoLS3);
+					double part8 = Math.Round(normalDistribution.Sample(), 0);
+					if (part8 >= minLoad && part8 < maxLoad)
+					{
+						randValueLoadSummer.Add(part8);
+					}
+				}
+			}
+
+			return randValueLoadSummer;
+		}
+
+		/// <summary>
+		/// Метод: генерация СВ Нагрузки (ЗИМА)
+		/// </summary>
+		/// <returns>Список СВ по Рнагр(зима)</returns>
+		public static List<double> RndValueLoadWinter()
+		{
+			// Константы з.распр. нагрузки - ЗИМА
+			double lw1 = 0.41;
+			double skoLW1 = 8;
+			double moLW1 = 110.5;
+			double lw2 = 0.42;
+			double skoLW2 = 9;
+			double moLW2 = 117.8;
+			double lw3 = 0.17;
+			double skoLW3 = 5;
+			double moLW3 = 113;
+			double minLoad = 10;
+			double maxLoad = 167;
+
+
+			// Генерация случайных величин (СВ)
+			Random rand = new Random();
+
+			// Лист для хранения СВ нагрузки
+			List<double> randValueLoadWinter = new List<double>();
+
+			// СВ нагрузка ЗИМА
+			while (randValueLoadWinter.Count < 59676)
+			{
+				double q = rand.NextDouble();
+				if (q > 0 && q <= lw1)
+				{
+					Normal normalDistribution = new Normal(moLW1, skoLW1);
+					double part9 = Math.Round(normalDistribution.Sample(), 0);
+					if (part9 >= minLoad && part9 < maxLoad)
+					{
+						randValueLoadWinter.Add(part9);
+					}
+				}
+				else if (q > lw1 && q <= (lw1 + lw2))
+				{
+					Normal normalDistribution = new Normal(moLW2, skoLW2);
+					double part10 = Math.Round(normalDistribution.Sample(), 0);
+					if (part10 >= minLoad && part10 < maxLoad)
+					{
+						randValueLoadWinter.Add(part10);
+					}
+				}
+				else if (q > (lw1 + lw2) && q <= (lw1 + lw2 + lw3))
+				{
+					Normal normalDistribution = new Normal(moLW3, skoLW3);
+					double part11 = Math.Round(normalDistribution.Sample(), 0);
+					if (part11 >= minLoad && part11 < maxLoad)
+					{
+						randValueLoadWinter.Add(part11);
+					}
+				}
+			}
+
+			return randValueLoadWinter;
+		}
+
+		/// <summary>
+		/// Работа алгоритма.
 		/// </summary>
 		public static void Main()
 		{
@@ -56,184 +288,20 @@ namespace VKPwork
 
 			Console.WriteLine($"Работа алгоритма.\n");
 
-			// Константы для искусственного з.распр. генерации ГЭС
-			double v3 = 0.42;
-			double sko3 = 3.7;
-			double mo3 = 14.5;
-			double v2 = 0.3;
-			double sko2 = 1.3;
-			double mo2 = 86.95;
-			double v1 = 0.16;
-			double lowerBound = 23;
-			double upperBound = 83.05;
-			double minGen = 8;
-			double maxGen = 87;
-
-			// Константы для искусственного з.распр. нагрузки
-			double v4 = 0.43;
-			double sko4 = 5.8;
-			double mo4 = 110.55;
-			double v5 = 0.41;
-			double sko5 = 11.2;
-			double mo5 = 107.8;
-			double v6 = 0.16;
-			double sko6 = 5.5;
-			double mo6 = 123.5;
-			double maxLoad = 167;
-
-			// Константы вероятности состояния цепей ЛЭП
-			double q0psl1 = 0.1328;
-			double q1psl1 = 0.8672;
-			double q0psl2 = 0.0407;
-			double q1psl2 = 0.9593;
-			double q0tm1 = 0.0322;
-			double q1tm1 = 0.9678;
-			double q0tm2 = 0.0358;
-			double q1tm2 = 0.9642;
-
-			// Генерация случайных величин (СВ)
+			// Генерация случайных величин
 			Random rand = new Random();
-
-			// Лист для хранения СВ генерации
-			List<double> randValueGen = new List<double>();
-
-			// Лист для хранения СВ нагрузки
-			List<double> randValueLoad = new List<double>();
-
-			// Лист для хранения СС Пеледуй-Сухой Лог №1
-			List<double> randSostPeledSyxLog1 = new List<double>();
-
-			// Лист для хранения СС Пеледуй-Сухой Лог №2
-			List<double> randSostPeledSyxLog2 = new List<double>();
-
-			// Лист для хранения СС Таксимо-Мамакан №1
-			List<double> randSostTaksimoMamakan1 = new List<double>();
-
-			// Лист для хранения СС Таксимо-Мамакан №2
-			List<double> randSostTaksimoMamakan2 = new List<double>();
-
-			// Генерация случайного числа ГЕНЕРАЦИИ в цикле с условием
-			while (randValueGen.Count < 105409)
-			{
-				double q = rand.NextDouble();
-
-				if (q >= 0 && q < v3)
-				{
-					Normal normalDistribution = new Normal(mo3, sko3);
-					double part3 = Math.Round(normalDistribution.Sample(), 0);
-					if (part3 >= minGen)
-					{
-						randValueGen.Add(part3);
-					}
-				}
-
-				else if (q >= v3 && q < (v3 + v1))
-				{
-					ContinuousUniform uniformDist = new ContinuousUniform(lowerBound, upperBound);
-					double part1 = Math.Round(uniformDist.Sample(), 0);
-					randValueGen.Add(part1);
-				}
-
-				else if (q >= (v3 + v1) && q < (v3 + v1 + v2))
-				{
-					Normal normalDistribution = new Normal(mo2, sko2);
-					double part2 = Math.Round(normalDistribution.Sample(), 0);
-					if (part2 < maxGen)
-					{
-						randValueGen.Add(part2);
-					}
-				}
-			}
-
-			// Генерация случайного числа НАГРУЗКИ в цикле с условием
-			while (randValueLoad.Count < 105409)
-			{
-				double q = rand.NextDouble();
-				if (q >= 0 && q < v4)
-				{
-					Normal normalDistribution = new Normal(mo4, sko4);
-					double part4 = Math.Round(normalDistribution.Sample(), 0);
-					if (part4 < maxLoad)
-					{
-						randValueLoad.Add(part4);
-					}
-				}
-				else if (q >= v4 && q < (v4 + v5))
-				{
-					Normal normalDistribution = new Normal(mo5, sko5);
-					double part5 = Math.Round(normalDistribution.Sample(), 0);
-					if (part5 < maxLoad)
-					{
-						randValueLoad.Add(part5);
-					}
-				}
-				else if (q >= v5 && q < (v4 + v5 + v6))
-				{
-					Normal normalDistribution = new Normal(mo6, sko6);
-					double part6 = Math.Round(normalDistribution.Sample(), 0);
-					if (part6 < maxLoad)
-					{
-						randValueLoad.Add(part6);
-					}
-				}
-			}
-
-			// 1 - отключение; 0 -включение
-			double s1 = 1;
-			double s2 = 0;
-			// Генерация случайного состояния ЦЕПИ линии
-			while (randSostPeledSyxLog1.Count < 105409 && randSostPeledSyxLog2.Count < 105409 
-				&& randSostTaksimoMamakan1.Count < 105409 && randSostTaksimoMamakan2.Count < 105409)
-			{
-				double q1 = rand.NextDouble();
-				double q2 = rand.NextDouble();
-				double q3 = rand.NextDouble();
-				double q4 = rand.NextDouble();
-				if (q1 >= 0 && q1 <= q0psl1)
-				{
-					randSostPeledSyxLog1.Add(s1);
-				}
-				if (q1 > q0psl1 && q1 <= (q0psl1 + q1psl1))
-				{
-					randSostPeledSyxLog1.Add(s2);
-				}
-				if (q2 >= 0 && q2 <= q0psl2)
-				{
-					randSostPeledSyxLog2.Add(s1);
-				}
-				if (q2 > q0psl2 && q2 <= (q0psl2 + q1psl2))
-				{
-					randSostPeledSyxLog2.Add(s2);
-				}
-				if (q3 >= 0 && q3 <= q0tm1)
-				{
-					randSostTaksimoMamakan1.Add(s1);
-				}
-				if (q3 > q0tm1 && q3 <= (q0tm1 + q1tm1))
-				{
-					randSostTaksimoMamakan1.Add(s2);
-				}
-				if (q4 >= 0 && q4 <= q0tm2)
-				{
-					randSostTaksimoMamakan2.Add(s1);
-				}
-				if (q4 > q0tm2 && q4 <= (q0tm2 + q1tm2))
-				{
-					randSostTaksimoMamakan2.Add(s2);
-				}
-			}
 
 			// Создание указателя на экземпляр RastrWin и его запуск
 			IRastr rastr = new Rastr();
 
 			// Загрузка файла
-			string fileRegim = @"C:\Users\Анастасия\Desktop\ПроизПрактика\Растр\Режим.rg2";
-			string shablonRegim = @"C:\Program Files (x86)\RastrWin3\RastrWin3\SHABLON\режим.rg2";
+			string fileRegim = @"C:\Users\aat146\Desktop\NewWork\Растр.rg2";
+			string shablonRegim = @"C:\Users\aat146\Documents\RastrWin3\SHABLON\режим.rg2";
 
 			rastr.Load(RG_KOD.RG_REPL, fileRegim, shablonRegim);
 
 			string fileSechen = @"C:\Users\Анастасия\Desktop\ПроизПрактика\Растр\Сечения.sch";
-			string shablonSechen = @"C:\Program Files (x86)\RastrWin3\RastrWin3\SHABLON\сечения.sch";
+			string shablonSechen = @"C:\Users\aat146\Documents\RastrWin3\SHABLON\сечения.sch";
 
 			rastr.Load(RG_KOD.RG_REPL, fileSechen, shablonSechen);
 
@@ -274,14 +342,14 @@ namespace VKPwork
 
 			double numberYR = 0;
 
-			// Цикл расчета перетоков в RastrWin3
-			for (int i = 0; i < 105409; i++)
+			// Цикл расчета в RastrWin3 (ЗИМА)
+			for (int i = 0; i < 59676; i++)
 			{
 				// Присвоение нового числа мощности генерации
-				var setSelAgr = "Num=" + 2;
+				var setSelAgr = "Num=" + 6;
 				tableGenYR.SetSel(setSelAgr);
 				var index1 = tableGenYR.FindNextSel[-1];
-				pGenYR.Z[index1] = randValueGen[i];
+				pGenYR.Z[index1] = [i];
 
 				// Присвоение нового числа мощности нагрузки
 				var setSelNy = "ny=" + 5;
