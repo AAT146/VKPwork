@@ -112,8 +112,8 @@
     <Compile Include="Excel.cs" />
     <Compile Include="SchemeNumber.cs" />
     <Compile Include="ComparisonHelper.cs" />
-    <Compile Include="PowerLineAfter.cs" />
     <Compile Include="PowerLineBefore.cs" />
+    <Compile Include="PowerLineAfter.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
